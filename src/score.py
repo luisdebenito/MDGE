@@ -1,4 +1,5 @@
 from src.help import Paintable, Movable
+from src.font import score_font
 import pygame
 
 SCORE_COLOR = (159, 164, 191)
@@ -10,11 +11,10 @@ class Score(Paintable, Movable):
         self._totalIterations = 0
         self.height = height
         self.width = width
-        self.font = pygame.font.Font("freesansbold.ttf", 140)
 
     def paint(self, screen: pygame.Surface) -> None:
-        text1 = self.font.render(str(self.value), True, SCORE_COLOR)
-        text2 = self.font.render(str(self.value), True, SCORE_COLOR)
+        text1 = score_font.render(str(self.value), True, SCORE_COLOR)
+        text2 = score_font.render(str(self.value), True, SCORE_COLOR)
         text1.set_alpha(40)
         text2.set_alpha(40)
         textRect1 = text1.get_rect()

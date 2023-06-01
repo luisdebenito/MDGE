@@ -1,12 +1,13 @@
 import pygame
-from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY
+import sys
 from typing import List
+from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY
 from src.enemySpawner import EnemySpawner
 from src.ball import BallArrows, BallAWSD
 from src.playground import Playground
 from src.collider import Collider
 from src.score import Score
-import sys
+from src.font import gameOver_font, welcomePage_font
 
 GAMEOVER_COLOR = (196, 201, 89)
 
@@ -19,7 +20,6 @@ class World:
     def _init_game(self) -> None:
         self.width: int = 800
         self.height: int = 600
-        pygame.init()
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.status = GAMESTATUS.WELCOME
 
@@ -89,12 +89,14 @@ class World:
 
     def _paint_gameOver(self) -> None:
         self.screen.fill(DARK_GRAY)
-        font = pygame.font.Font("freesansbold.ttf", 100)
-        textGO = font.render("GAME OVER", True, GAMEOVER_COLOR)
-        textSC = font.render(str(self.score.value), True, GAMEOVER_COLOR)
+        self.playerL.paint(self.screen)
+        self.playerR.paint(self.screen)
+
+        textGO = gameOver_font.render("GAME OVER", True, GAMEOVER_COLOR)
+        textSC = gameOver_font.render(str(self.score.value), True, GAMEOVER_COLOR)
         textRectGo = textGO.get_rect()
         textRectSC = textSC.get_rect()
-        textRectGo.center = (self.width // 2, self.height // 2)
+        textRectGo.center = (self.width // 2, self.height * 3.5 // 8)
         textRectSC.center = (self.width // 2, self.height * 5.5 // 8)
         self.screen.blit(textGO, textRectGo)
         self.screen.blit(textSC, textRectSC)
@@ -109,9 +111,8 @@ class World:
 
     def _paint_welcomePage(self) -> None:
         self.screen.fill(DARK_GRAY)
-        font = pygame.font.Font("freesansbold.ttf", 100)
-        t1 = font.render("SPACE", True, GAMEOVER_COLOR)
-        t2 = font.render("TO START", True, GAMEOVER_COLOR)
+        t1 = welcomePage_font.render("SPACE", True, GAMEOVER_COLOR)
+        t2 = welcomePage_font.render("TO START", True, GAMEOVER_COLOR)
         tr1 = t1.get_rect()
         tr2 = t2.get_rect()
         tr1.center = (self.width // 2, self.height * 3 // 8)
