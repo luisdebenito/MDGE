@@ -13,10 +13,15 @@ class Ball(Paintable, Movable):
         self.position: Position = position
         self.speed: float = 0.5
         self.color: tuple = PLAYER_COLOR
+        self.outline: int = 20
 
     def paint(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(
-            screen, self.color, (self.position.posx, self.position.posy), self.rad
+            screen,
+            self.color,
+            (self.position.posx, self.position.posy),
+            self.rad,
+            self.outline,
         )
 
     def eat(self) -> None:
@@ -59,6 +64,7 @@ class EnemyBall(Ball):
         self.angle: float = angle
         self.angleOffset: float = random.uniform(0, math.pi / 3)
         self.speed: float = speed
+        self.outline = 0
 
     def move(self) -> None:
         self.position.posx += math.cos(self.angle + self.angleOffset) * self.speed

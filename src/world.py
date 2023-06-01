@@ -8,6 +8,8 @@ from src.collider import Collider
 from src.score import Score
 import sys
 
+GAMEOVER_COLOR = (196, 201, 89)
+
 
 class World:
     def __init__(self) -> None:
@@ -19,7 +21,7 @@ class World:
         self.height: int = 600
         pygame.init()
         self.screen = pygame.display.set_mode((self.width, self.height))
-        self.status = GAMESTATUS.GAMEOVER
+        self.status = GAMESTATUS.WELCOME
 
     def _init_world(self) -> None:
         self.movablePool: List[Movable] = []
@@ -62,22 +64,61 @@ class World:
         while True:
             self.handle_events()
             if self.status == GAMESTATUS.PLAYING:
-                self.enemiesSpawner.spawnEnemies(self.score.value)
-                self.move()
-                self.calculateColliders()
-                self.enemiesSpawner.update_grid_size(
-                    max(self.playerL.rad, self.playerR.rad) + 20
-                )
+                self._playing()
             elif self.status == GAMESTATUS.GAMEOVER:
-                self.handleGameOver()
+                self.gameOver()
+            elif self.status == GAMESTATUS.WELCOME:
+                self.welcomePage()
 
-            self.paint()
+    def _playing(self) -> None:
+        self.enemiesSpawner.spawnEnemies(self.score.value)
+        self.move()
+        self.calculateColliders()
+        self.enemiesSpawner.update_grid_size(
+            max(self.playerL.rad, self.playerR.rad) + 20
+        )
 
-    def handleGameOver(self) -> None:
+        self._paint_playing()
+
+    def gameOver(self) -> None:
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_r]:
+        if keys[pygame.K_SPACE]:
             self._init_world()
             self.status = GAMESTATUS.PLAYING
+        self._paint_gameOver()
+
+    def _paint_gameOver(self) -> None:
+        self.screen.fill(DARK_GRAY)
+        font = pygame.font.Font("freesansbold.ttf", 100)
+        textGO = font.render("GAME OVER", True, GAMEOVER_COLOR)
+        textSC = font.render(str(self.score.value), True, GAMEOVER_COLOR)
+        textRectGo = textGO.get_rect()
+        textRectSC = textSC.get_rect()
+        textRectGo.center = (self.width // 2, self.height // 2)
+        textRectSC.center = (self.width // 2, self.height * 5.5 // 8)
+        self.screen.blit(textGO, textRectGo)
+        self.screen.blit(textSC, textRectSC)
+        pygame.display.flip()
+
+    def welcomePage(self) -> None:
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_SPACE]:
+            self._init_world()
+            self.status = GAMESTATUS.PLAYING
+        self._paint_welcomePage()
+
+    def _paint_welcomePage(self) -> None:
+        self.screen.fill(DARK_GRAY)
+        font = pygame.font.Font("freesansbold.ttf", 100)
+        t1 = font.render("SPACE", True, GAMEOVER_COLOR)
+        t2 = font.render("TO START", True, GAMEOVER_COLOR)
+        tr1 = t1.get_rect()
+        tr2 = t2.get_rect()
+        tr1.center = (self.width // 2, self.height * 3 // 8)
+        tr2.center = (self.width // 2, self.height * 5 // 8)
+        self.screen.blit(t1, tr1)
+        self.screen.blit(t2, tr2)
+        pygame.display.flip()
 
     def calculateColliders(self) -> None:
         if any(
@@ -110,7 +151,7 @@ class World:
         for movItem in self.movablePool:
             movItem.move()
 
-    def paint(self) -> None:
+    def _paint_playing(self) -> None:
         self.screen.fill(DARK_GRAY)
         for paintItem in self.paintablePool:
             paintItem.paint(self.screen)

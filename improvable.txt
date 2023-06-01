@@ -1,0 +1,5 @@
+take width border in consideration for the collider
+
+font as a module
+
+welcomepage and game over as module

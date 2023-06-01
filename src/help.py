@@ -7,8 +7,9 @@ DARK_GRAY: tuple = (40, 40, 40)
 
 
 class GAMESTATUS(Enum):
-    PLAYING = 0
-    GAMEOVER = 1
+    WELCOME = 0
+    PLAYING = 1
+    GAMEOVER = 2
 
 
 class Paintable:
