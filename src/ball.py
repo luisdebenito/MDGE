@@ -3,13 +3,16 @@ from src.help import Paintable, Movable, Position
 import random
 import math
 
+PLAYER_COLOR = (255, 255, 255)
+ENEMY_COLOR = (8, 55, 135)
+
 
 class Ball(Paintable, Movable):
-    def __init__(self, position: Position, color: tuple) -> None:
+    def __init__(self, position: Position) -> None:
         self.rad: int = 10
         self.position: Position = position
         self.speed: float = 0.5
-        self.color: tuple = color
+        self.color: tuple = PLAYER_COLOR
 
     def paint(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(
@@ -52,7 +55,7 @@ class EnemyBall(Ball):
     def __init__(self, position: Position, angle: float, speed: float) -> None:
         self.rad: int = 20
         self.position: Position = position
-        self.color: tuple = (40, 40, 140, 20)
+        self.color: tuple = ENEMY_COLOR
         self.angle: float = angle
         self.angleOffset: float = random.uniform(0, math.pi / 3)
         self.speed: float = speed

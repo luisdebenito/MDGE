@@ -1,10 +1,11 @@
 import pygame
-from src.help import Paintable, Movable, GAMESTATUS, Position, WHITE, DARK_GRAY
+from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY
 from typing import List
 from src.enemySpawner import EnemySpawner
 from src.ball import BallArrows, BallAWSD
 from src.playground import Playground
 from src.collider import Collider
+from src.score import Score
 import sys
 
 
@@ -19,34 +20,37 @@ class World:
         pygame.init()
         self.screen = pygame.display.set_mode((self.width, self.height))
         self.status = GAMESTATUS.GAMEOVER
-        self.font = pygame.font.Font("freesansbold.ttf", 72)
 
     def _init_world(self) -> None:
-        self.score = 0
-        self._totalIters = 0
         self.movablePool: List[Movable] = []
         self.paintablePool: List[Paintable] = []
 
+        # PLAYGROUND
         self.playground: Playground = Playground(
             Position(10, 10), self.width - 20, self.height - 20
         )
         self.paintablePool.append(self.playground)
 
+        # SCORE
+        self.score: Score = Score(self.height, self.width)
+        self.paintablePool.append(self.score)
+        self.movablePool.append(self.score)
+
+        # PLAYERS
         self._declareBalls()
 
+        # ENEMIES
         self.enemiesSpawner: EnemySpawner = EnemySpawner(
-            self.score, self.width, self.height
+            self.score.value, self.width, self.height
         )
         self.paintablePool.append(self.enemiesSpawner)
         self.movablePool.append(self.enemiesSpawner)
 
     def _declareBalls(self) -> None:
         self.playerR: BallArrows = BallArrows(
-            Position(self.width * 3 // 4, self.height // 2), WHITE
+            Position(self.width * 3 // 4, self.height // 2)
         )
-        self.playerL: BallAWSD = BallAWSD(
-            Position(self.width // 4, self.height // 2), WHITE
-        )
+        self.playerL: BallAWSD = BallAWSD(Position(self.width // 4, self.height // 2))
 
         self.movablePool.append(self.playerR)
         self.movablePool.append(self.playerL)
@@ -58,22 +62,16 @@ class World:
         while True:
             self.handle_events()
             if self.status == GAMESTATUS.PLAYING:
-                self.enemiesSpawner.spawnEnemies(self.score)
+                self.enemiesSpawner.spawnEnemies(self.score.value)
                 self.move()
                 self.calculateColliders()
                 self.enemiesSpawner.update_grid_size(
                     max(self.playerL.rad, self.playerR.rad) + 20
                 )
-                self.scoreUp()
             elif self.status == GAMESTATUS.GAMEOVER:
                 self.handleGameOver()
 
             self.paint()
-
-    def scoreUp(self):
-        self._totalIters += 1
-        if self._totalIters % 250 == 0:
-            self.score += 1
 
     def handleGameOver(self) -> None:
         keys = pygame.key.get_pressed()
@@ -114,18 +112,7 @@ class World:
 
     def paint(self) -> None:
         self.screen.fill(DARK_GRAY)
-        self._paintScore()
         for paintItem in self.paintablePool:
             paintItem.paint(self.screen)
 
         pygame.display.flip()
-
-    def _paintScore(self) -> None:
-        text1 = self.font.render(str(self.score), True, (42, 56, 170, 20))
-        text2 = self.font.render(str(self.score), True, (150, 26, 60, 20))
-        textRect1 = text1.get_rect()
-        textRect2 = text2.get_rect()
-        textRect1.center = (self.width * 3 // 4, self.height // 2)
-        textRect2.center = (self.width // 4, self.height // 2)
-        self.screen.blit(text1, textRect1)
-        self.screen.blit(text2, textRect2)

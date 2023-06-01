@@ -3,9 +3,7 @@ from enum import Enum
 import pygame
 
 
-BLACK: tuple = (20, 20, 20)
 DARK_GRAY: tuple = (40, 40, 40)
-WHITE: tuple = (155, 200, 25, 10)
 
 
 class GAMESTATUS(Enum):
