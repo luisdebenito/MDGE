@@ -1,15 +1,16 @@
 import pygame
 import sys
 from typing import List
-from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY
+from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY, GAMEOVER_COLOR
 from src.enemySpawner import EnemySpawner
 from src.ball import BallArrows, BallAWSD
 from src.playground import Playground
 from src.collider import Collider
 from src.score import Score
-from src.font import gameOver_font, welcomePage_font
+from src.music import MusicPlayer
 
-GAMEOVER_COLOR = (196, 201, 89)
+from src.gameOver import GameOverScreen
+from src.welcomePage import WelcomePageScreen
 
 
 class World:
@@ -21,6 +22,14 @@ class World:
         self.width: int = 800
         self.height: int = 600
         self.screen = pygame.display.set_mode((self.width, self.height))
+
+        # different screens
+        self.gameOverScreen = GameOverScreen(self.screen, self.height, self.width)
+        self.welcomePageScreen = WelcomePageScreen(self.screen, self.height, self.width)
+
+        self.musicplayer = MusicPlayer()
+
+        # set initial status
         self.status = GAMESTATUS.WELCOME
 
     def _init_world(self) -> None:
@@ -39,7 +48,7 @@ class World:
         self.movablePool.append(self.score)
 
         # PLAYERS
-        self._declareBalls()
+        self._declarePlayers()
 
         # ENEMIES
         self.enemiesSpawner: EnemySpawner = EnemySpawner(
@@ -48,7 +57,10 @@ class World:
         self.paintablePool.append(self.enemiesSpawner)
         self.movablePool.append(self.enemiesSpawner)
 
-    def _declareBalls(self) -> None:
+        # start music
+        self.musicplayer.play()
+
+    def _declarePlayers(self) -> None:
         self.playerR: BallArrows = BallArrows(
             Position(self.width * 3 // 4, self.height // 2)
         )
@@ -65,10 +77,24 @@ class World:
             self.handle_events()
             if self.status == GAMESTATUS.PLAYING:
                 self._playing()
-            elif self.status == GAMESTATUS.GAMEOVER:
-                self.gameOver()
-            elif self.status == GAMESTATUS.WELCOME:
-                self.welcomePage()
+            else:
+                self.musicplayer.stop()
+                self._checkSpaceBar()
+                if self.status == GAMESTATUS.GAMEOVER:
+                    self.gameOverScreen.show(
+                        self.score.value, self.playerL, self.playerR
+                    )
+                elif self.status == GAMESTATUS.WELCOME:
+                    self.welcomePageScreen.show()
+
+    def handle_events(self) -> None:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self._exit()
+
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_ESCAPE]:
+            self._exit()
 
     def _playing(self) -> None:
         self.enemiesSpawner.spawnEnemies(self.score.value)
@@ -78,47 +104,17 @@ class World:
             max(self.playerL.rad, self.playerR.rad) + 20
         )
 
-        self._paint_playing()
+        self.paint()
 
-    def gameOver(self) -> None:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            self._init_world()
-            self.status = GAMESTATUS.PLAYING
-        self._paint_gameOver()
+    def move(self) -> None:
+        for movItem in self.movablePool:
+            movItem.move()
 
-    def _paint_gameOver(self) -> None:
+    def paint(self) -> None:
         self.screen.fill(DARK_GRAY)
-        self.playerL.paint(self.screen)
-        self.playerR.paint(self.screen)
+        for paintItem in self.paintablePool:
+            paintItem.paint(self.screen)
 
-        textGO = gameOver_font.render("GAME OVER", True, GAMEOVER_COLOR)
-        textSC = gameOver_font.render(str(self.score.value), True, GAMEOVER_COLOR)
-        textRectGo = textGO.get_rect()
-        textRectSC = textSC.get_rect()
-        textRectGo.center = (self.width // 2, self.height * 3.5 // 8)
-        textRectSC.center = (self.width // 2, self.height * 5.5 // 8)
-        self.screen.blit(textGO, textRectGo)
-        self.screen.blit(textSC, textRectSC)
-        pygame.display.flip()
-
-    def welcomePage(self) -> None:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
-            self._init_world()
-            self.status = GAMESTATUS.PLAYING
-        self._paint_welcomePage()
-
-    def _paint_welcomePage(self) -> None:
-        self.screen.fill(DARK_GRAY)
-        t1 = welcomePage_font.render("SPACE", True, GAMEOVER_COLOR)
-        t2 = welcomePage_font.render("TO START", True, GAMEOVER_COLOR)
-        tr1 = t1.get_rect()
-        tr2 = t2.get_rect()
-        tr1.center = (self.width // 2, self.height * 3 // 8)
-        tr2.center = (self.width // 2, self.height * 5 // 8)
-        self.screen.blit(t1, tr1)
-        self.screen.blit(t2, tr2)
         pygame.display.flip()
 
     def calculateColliders(self) -> None:
@@ -135,26 +131,12 @@ class World:
                 ball.eat()
                 self.enemiesSpawner.removeEnemy(enemy)
 
-    def handle_events(self) -> None:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self._exit()
-
+    def _checkSpaceBar(self) -> None:
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
-            self._exit()
+        if keys[pygame.K_SPACE]:
+            self._init_world()
+            self.status = GAMESTATUS.PLAYING
 
     def _exit(self) -> None:
         pygame.quit()
         sys.exit()
-
-    def move(self) -> None:
-        for movItem in self.movablePool:
-            movItem.move()
-
-    def _paint_playing(self) -> None:
-        self.screen.fill(DARK_GRAY)
-        for paintItem in self.paintablePool:
-            paintItem.paint(self.screen)
-
-        pygame.display.flip()

@@ -4,6 +4,7 @@ import pygame
 
 
 DARK_GRAY: tuple = (40, 40, 40)
+GAMEOVER_COLOR = (196, 201, 89)
 
 
 class GAMESTATUS(Enum):
