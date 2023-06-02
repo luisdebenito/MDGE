@@ -1,12 +1,13 @@
-import pygame
+import pygame, asyncio
 import sys
 from typing import List
-from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY, GAMEOVER_COLOR
+from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY
 from src.enemySpawner import EnemySpawner
 from src.ball import BallArrows, BallAWSD
 from src.playground import Playground
 from src.collider import Collider
 from src.score import Score
+
 from src.music import MusicPlayer
 
 from src.gameOver import GameOverScreen
@@ -22,6 +23,7 @@ class World:
         self.width: int = 800
         self.height: int = 600
         self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("M.D.G.E")
 
         # different screens
         self.gameOverScreen = GameOverScreen(self.screen, self.height, self.width)
@@ -57,9 +59,6 @@ class World:
         self.paintablePool.append(self.enemiesSpawner)
         self.movablePool.append(self.enemiesSpawner)
 
-        # start music
-        self.musicplayer.play()
-
     def _declarePlayers(self) -> None:
         self.playerR: BallArrows = BallArrows(
             Position(self.width * 3 // 4, self.height // 2)
@@ -72,13 +71,12 @@ class World:
         self.paintablePool.append(self.playerR)
         self.paintablePool.append(self.playerL)
 
-    def play(self) -> None:
+    async def play(self) -> None:
         while True:
             self.handle_events()
             if self.status == GAMESTATUS.PLAYING:
                 self._playing()
             else:
-                self.musicplayer.stop()
                 self._checkSpaceBar()
                 if self.status == GAMESTATUS.GAMEOVER:
                     self.gameOverScreen.show(
@@ -86,15 +84,12 @@ class World:
                     )
                 elif self.status == GAMESTATUS.WELCOME:
                     self.welcomePageScreen.show()
+            await asyncio.sleep(0)
 
     def handle_events(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self._exit()
-
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_ESCAPE]:
-            self._exit()
 
     def _playing(self) -> None:
         self.enemiesSpawner.spawnEnemies(self.score.value)
@@ -125,6 +120,7 @@ class World:
             ]
         ):
             self.status = GAMESTATUS.GAMEOVER
+            self.musicplayer.stop()
 
         for ball in [self.playerL, self.playerR]:
             if enemy := Collider.check_Ball_w_Enemies(ball, self.enemiesSpawner):
@@ -136,6 +132,8 @@ class World:
         if keys[pygame.K_SPACE]:
             self._init_world()
             self.status = GAMESTATUS.PLAYING
+            # start music
+            self.musicplayer.play()
 
     def _exit(self) -> None:
         pygame.quit()

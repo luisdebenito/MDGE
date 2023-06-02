@@ -45,6 +45,8 @@ Most difficult game ever
 ### Follow 1 to 3 steps of Developer
 
 ### 2- Run command:
-```pyinstaller --onefile --noconsole main.py```
+```pygbag .```
 
-### 3- Double click on the dist/main file
+### 3- Copy paste the media folder inside build/web 
+
+### 4- Open localhost:8000

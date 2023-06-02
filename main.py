@@ -1,4 +1,4 @@
-import pygame
+import pygame, asyncio
 
 pygame.init()
 
@@ -6,4 +6,9 @@ from src.world import World
 
 world = World()
 
-world.play()
+
+async def main():
+    await world.play()
+
+
+asyncio.run(main())

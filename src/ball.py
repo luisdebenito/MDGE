@@ -1,5 +1,5 @@
 import pygame
-from src.help import Paintable, Movable, Position
+from src.help import Paintable, Movable, Position, SPEED_RATIO
 import random
 import math
 
@@ -11,7 +11,7 @@ class Ball(Paintable, Movable):
     def __init__(self, position: Position) -> None:
         self.rad: int = 10
         self.position: Position = position
-        self.speed: float = 0.5
+        self.speed: float = 0.5 * SPEED_RATIO
         self.color: tuple = PLAYER_COLOR
         self.outline: int = 20
 
@@ -63,7 +63,7 @@ class EnemyBall(Ball):
         self.color: tuple = ENEMY_COLOR
         self.angle: float = angle
         self.angleOffset: float = random.uniform(0, math.pi / 3)
-        self.speed: float = speed
+        self.speed: float = speed * SPEED_RATIO
         self.outline = 0
 
     def move(self) -> None:

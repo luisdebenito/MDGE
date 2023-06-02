@@ -2,6 +2,8 @@ from abc import abstractmethod
 from enum import Enum
 import pygame
 
+SPEED_RATIO = 5
+
 
 DARK_GRAY: tuple = (40, 40, 40)
 GAMEOVER_COLOR = (196, 201, 89)

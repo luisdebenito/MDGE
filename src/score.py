@@ -1,4 +1,4 @@
-from src.help import Paintable, Movable
+from src.help import Paintable, Movable, SPEED_RATIO
 from src.font import score_font
 import pygame
 
@@ -26,5 +26,5 @@ class Score(Paintable, Movable):
 
     def move(self) -> None:
         self._totalIterations += 1
-        if self._totalIterations % 250 == 0:
+        if self._totalIterations % (250 // SPEED_RATIO) == 0:
             self.value += 1
