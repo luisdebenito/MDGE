@@ -25,6 +25,11 @@ class Ball(Paintable, Movable):
     def eat(self) -> None:
         self.rad += 10
 
+    def slim(self) -> None:
+        self.rad /= 3
+        if self.rad < 10:
+            self.rad = 10
+
 
 class PlayerBall(Ball):
     key_left: str = ""

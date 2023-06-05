@@ -40,7 +40,7 @@ class World:
             Position(10, 10), self.width - 20, self.height - 20
         )
         self.energyBar: EnergyBar = EnergyBar(
-            Position(self.width // 2, 30), self.height - 80, 40
+            Position(self.width // 2, 30), self.height - 60, 40
         )
         self.score: Score = Score(self.height, self.width)
         self.enemiesSpawner: EnemySpawner = EnemySpawner(
@@ -90,6 +90,7 @@ class World:
         self.enemiesSpawner.update_grid_size(
             max(self.playerL.rad, self.playerR.rad) + 20
         )
+        self.checkEnergyConsumable()
         self.paint()
 
     def move(self) -> None:
@@ -118,6 +119,12 @@ class World:
             if enemy := Collider.check_Ball_w_Enemies(ball, self.enemiesSpawner):
                 ball.eat()
                 self.enemiesSpawner.removeEnemy(enemy)
+
+    def checkEnergyConsumable(self) -> None:
+        if not self.energyBar.is_Consumable() or not self.keys_pressed[pygame.K_SPACE]:
+            return
+        self.playerL.slim() if self.playerL.rad >= self.playerR.rad else self.playerR.slim()
+        self.energyBar.restart()
 
     def _checkSpaceBar(self) -> None:
         if self.keys_pressed[pygame.K_SPACE]:

@@ -2,7 +2,8 @@ from src.help import Paintable, Movable, Position, SPEED_RATIO, DARK_GRAY
 from src.font import energybar_font
 import pygame
 
-ENERGY_COLOR = (145, 156, 178)
+ENERGY_COLOR = (196, 201, 89)
+CONSUMABLE_COLOR = (136, 252, 3)
 
 
 class EnergyBar(Paintable, Movable):
@@ -18,7 +19,7 @@ class EnergyBar(Paintable, Movable):
     def paint(self, screen: pygame.Surface):
         pygame.draw.rect(
             screen,
-            ENERGY_COLOR,
+            CONSUMABLE_COLOR if self.is_Consumable() else ENERGY_COLOR,
             (
                 self.position.posx,
                 self.position.posy,
@@ -26,7 +27,7 @@ class EnergyBar(Paintable, Movable):
                 self.paintedHeight,
             ),
         )
-        if self.paintedHeight < self.height:
+        if not self.is_Consumable():
             return
 
         rotated_text = pygame.transform.rotate(
@@ -44,3 +45,9 @@ class EnergyBar(Paintable, Movable):
         if self.paintedHeight >= self.height:
             return
         self.paintedHeight += (self.height / 50) * 0.005 * SPEED_RATIO
+
+    def is_Consumable(self) -> bool:
+        return self.paintedHeight >= self.height
+
+    def restart(self) -> None:
+        self.paintedHeight = 0

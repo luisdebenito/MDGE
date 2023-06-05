@@ -2,7 +2,7 @@ import pygame
 from src.help import Paintable, Position
 
 LINE_COLOR = (209, 51, 212)
-WALL_COLOR = (205, 217, 132)
+WALL_COLOR = (196, 201, 89)
 
 
 class Playground(Paintable):
