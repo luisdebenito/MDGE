@@ -1,6 +1,7 @@
 import pygame, asyncio
 
 pygame.init()
+pygame.mouse.set_visible(False)
 
 from src.world import World
 

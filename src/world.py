@@ -7,6 +7,7 @@ from src.ball import BallArrows, BallAWSD
 from src.playground import Playground
 from src.collider import Collider
 from src.score import Score
+from src.energyBar import EnergyBar
 
 from src.music import MusicPlayer
 
@@ -50,6 +51,13 @@ class World:
             Position(10, 10), self.width - 20, self.height - 20
         )
         self.paintablePool.append(self.playground)
+
+        # energy bar
+        self.energyBar: EnergyBar = EnergyBar(
+            Position(self.width // 2, 30), self.height - 80, 40
+        )
+        self.paintablePool.append(self.energyBar)
+        self.movablePool.append(self.energyBar)
 
         # SCORE
         self.score: Score = Score(self.height, self.width)
