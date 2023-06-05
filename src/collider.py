@@ -7,14 +7,14 @@ class Collider:
     def checkLeftBall_w_Playground(ball: BallAWSD, pg: Playground) -> bool:
         return (
             (ball.position.posx - ball.rad < pg.position.posx)
-            or (ball.position.posx + ball.rad > (pg.position.posx + pg.width) // 2)
+            or (ball.position.posx + ball.rad > pg.wall_x)
             or ball.position.posy - ball.rad < pg.position.posy
             or ball.position.posy + ball.rad > pg.position.posy + pg.height
         )
 
     def checkRightBall_w_Playground(ball: BallArrows, pg: Playground) -> bool:
         return (
-            ball.position.posx - ball.rad < (pg.position.posx + pg.width) // 2
+            ball.position.posx - ball.rad < (pg.wall_x + pg.wall_width)
             or ball.position.posx + ball.rad > pg.position.posx + pg.width
             or ball.position.posy - ball.rad < pg.position.posy
             or ball.position.posy + ball.rad > pg.position.posy + pg.height

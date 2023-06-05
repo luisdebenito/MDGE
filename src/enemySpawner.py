@@ -71,7 +71,7 @@ class EnemySpawner(Paintable, Movable):
         for enemy in self.enemies:
             enemy.paint(screen)
 
-    def move(self) -> None:
+    def move(self, keys: pygame.key.ScancodeWrapper | None = None) -> None:
         for enemy in self.enemies:
             enemy.move()
         self.update_grid()

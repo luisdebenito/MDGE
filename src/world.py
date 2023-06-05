@@ -22,17 +22,24 @@ class World:
     def _init_game(self) -> None:
         self.width: int = 800
         self.height: int = 600
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        self.screen: pygame.surface = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("M.D.G.E")
 
         # different screens
-        self.gameOverScreen = GameOverScreen(self.screen, self.height, self.width)
-        self.welcomePageScreen = WelcomePageScreen(self.screen, self.height, self.width)
+        self.gameOverScreen: GameOverScreen = GameOverScreen(
+            self.screen, self.height, self.width
+        )
+        self.welcomePageScreen: WelcomePageScreen = WelcomePageScreen(
+            self.screen, self.height, self.width
+        )
 
-        self.musicplayer = MusicPlayer()
+        self.musicplayer: MusicPlayer = MusicPlayer()
 
         # set initial status
-        self.status = GAMESTATUS.WELCOME
+        self.status: GAMESTATUS = GAMESTATUS.WELCOME
+
+        # keypressed event stored in a variable
+        self.keys_pressed: pygame.key.ScancodeWrapper = None
 
     def _init_world(self) -> None:
         self.movablePool: List[Movable] = []
@@ -87,6 +94,7 @@ class World:
             await asyncio.sleep(0)
 
     def handle_events(self) -> None:
+        self.keys_pressed = pygame.key.get_pressed()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self._exit()
@@ -103,7 +111,7 @@ class World:
 
     def move(self) -> None:
         for movItem in self.movablePool:
-            movItem.move()
+            movItem.move(self.keys_pressed)
 
     def paint(self) -> None:
         self.screen.fill(DARK_GRAY)
@@ -128,8 +136,7 @@ class World:
                 self.enemiesSpawner.removeEnemy(enemy)
 
     def _checkSpaceBar(self) -> None:
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_SPACE]:
+        if self.keys_pressed[pygame.K_SPACE]:
             self._init_world()
             self.status = GAMESTATUS.PLAYING
             # start music

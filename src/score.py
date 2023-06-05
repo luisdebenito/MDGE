@@ -24,7 +24,7 @@ class Score(Paintable, Movable):
         screen.blit(text1, textRect1)
         screen.blit(text2, textRect2)
 
-    def move(self) -> None:
+    def move(self, keys: pygame.key.ScancodeWrapper | None = None) -> None:
         self._totalIterations += 1
         if self._totalIterations % (250 // SPEED_RATIO) == 0:
             self.value += 1

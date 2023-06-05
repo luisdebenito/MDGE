@@ -2,11 +2,11 @@ from abc import abstractmethod
 from enum import Enum
 import pygame
 
-SPEED_RATIO = 5
+SPEED_RATIO = 1
 
 
 DARK_GRAY: tuple = (40, 40, 40)
-GAMEOVER_COLOR = (196, 201, 89)
+FONT_COLOR = (196, 201, 89)
 
 
 class GAMESTATUS(Enum):
@@ -23,7 +23,7 @@ class Paintable:
 
 class Movable:
     @abstractmethod
-    def move(self) -> None:
+    def move(self, keys: pygame.key.ScancodeWrapper | None = None) -> None:
         pass
 
 
