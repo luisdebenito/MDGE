@@ -1,1 +1,0 @@
-In the middle, create an energy bar that when completed can reduce one ball to half
