@@ -1,6 +1,8 @@
 # MDGE
 Most difficult game ever
 
+Play at: [GithubPage](https://luisdebenito.github.io/MDGE/)
+
 # 
 ## Developer
 
