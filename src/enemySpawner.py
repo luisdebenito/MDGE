@@ -8,7 +8,7 @@ from typing import List, Optional
 
 class EnemySpawner(Paintable, Movable):
     grid_size: int = 50
-    maxNumEnemies: int = 31
+    maxNumEnemies: int = 28
 
     def __init__(self, score: int, width: int, height: int) -> None:
         self.enemies: List[EnemyBall] = []
@@ -35,7 +35,7 @@ class EnemySpawner(Paintable, Movable):
         self._spawn_new(score)
 
     def _spawn_new(self, score: int) -> None:
-        num_balls = random.randint(5, 8)
+        num_balls = random.randint(5, 7)
         self.enemies.extend(
             [
                 EnemyBall(
