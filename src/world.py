@@ -22,7 +22,7 @@ class World:
         self.width: int = 800
         self.height: int = 600
         self.screen: pygame.surface = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("M.D.G.E")
+        pygame.display.set_caption("M.D.G.E | Most Difficult Game Ever")
         self.gameOverScreen: GameOverScreen = GameOverScreen(
             self.screen, self.height, self.width
         )

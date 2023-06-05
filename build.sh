@@ -2,7 +2,7 @@
 
 rm -rf build/
 export SPEED_RATIO=6
-pygbag --can_close 1 --build --no_opt .
+pygbag --can_close 1 --build --no_opt --template media/my_index.html .
 mkdir build/web/media
 cp -R media/* build/web/media/
 rm build/web/favicon.png
