@@ -2,6 +2,7 @@ import pygame
 from src.help import Paintable, Position
 
 LINE_COLOR = (209, 51, 212)
+WALL_COLOR = (205, 217, 132)
 
 
 class Playground(Paintable):
@@ -9,8 +10,22 @@ class Playground(Paintable):
         self.width: int = width
         self.height: int = height
         self.position: Position = position
+        self.wall_width = 80
+        self.wall_x = (self.width // 2 - self.wall_width // 2) + self.position.posx
 
     def paint(self, screen: pygame.Surface) -> None:
+        pygame.draw.rect(
+            screen,
+            WALL_COLOR,
+            (
+                self.wall_x,
+                self.position.posy,
+                self.wall_width,
+                self.height,
+            ),
+            20,
+        )
+
         pygame.draw.rect(
             screen,
             LINE_COLOR,
@@ -21,17 +36,4 @@ class Playground(Paintable):
                 self.height,
             ),
             5,
-        )
-
-        wall_width = 5
-        wall_x = self.width // 2 - wall_width // 2
-        pygame.draw.rect(
-            screen,
-            LINE_COLOR,
-            (
-                wall_x,
-                10,
-                wall_width,
-                self.height,
-            ),
         )

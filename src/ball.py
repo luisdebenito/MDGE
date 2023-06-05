@@ -1,9 +1,10 @@
 import pygame
+from src.help import Position
 from src.help import Paintable, Movable, Position, SPEED_RATIO
 import random
 import math
 
-PLAYER_COLOR = (255, 255, 255)
+PLAYER_COLOR = (225, 225, 225)
 ENEMY_COLOR = (8, 55, 135)
 
 
@@ -11,7 +12,7 @@ class Ball(Paintable, Movable):
     def __init__(self, position: Position) -> None:
         self.rad: int = 10
         self.position: Position = position
-        self.speed: float = 0.5 * SPEED_RATIO
+        self.speed: float = 0.55 * SPEED_RATIO
         self.color: tuple = PLAYER_COLOR
         self.outline: int = 20
 
@@ -28,32 +29,37 @@ class Ball(Paintable, Movable):
         self.rad += 10
 
 
-class BallArrows(Ball):
-    def move(self) -> None:
-        # Handle arrow key presses
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_UP]:
-            self.position.posy -= self.speed
-        if keys[pygame.K_DOWN]:
-            self.position.posy += self.speed
-        if keys[pygame.K_LEFT]:
-            self.position.posx -= self.speed
-        if keys[pygame.K_RIGHT]:
-            self.position.posx += self.speed
+class PlayerBall(Ball):
+    key_left = ""
+    key_right = ""
+    key_up = ""
+    key_down = ""
+
+    def move(self, keys: pygame.key.ScancodeWrapper) -> None:
+        # Determine the movement direction based on the pressed keys
+        dx = (keys[self.key_right] != 0) - (keys[self.key_left] != 0)
+        dy = (keys[self.key_down] != 0) - (keys[self.key_up] != 0)
+
+        # Calculate the diagonal movement factor
+        diagonal_factor = 1 / math.sqrt(2) if dx != 0 and dy != 0 else 1
+
+        # Update the position based on the direction and speed
+        self.position.posx += dx * self.speed * diagonal_factor
+        self.position.posy += dy * self.speed * diagonal_factor
 
 
-class BallAWSD(Ball):
-    def move(self) -> None:
-        # Handle arrow key presses
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_w]:
-            self.position.posy -= self.speed
-        if keys[pygame.K_s]:
-            self.position.posy += self.speed
-        if keys[pygame.K_a]:
-            self.position.posx -= self.speed
-        if keys[pygame.K_d]:
-            self.position.posx += self.speed
+class BallArrows(PlayerBall):
+    key_down = pygame.K_DOWN
+    key_left = pygame.K_LEFT
+    key_right = pygame.K_RIGHT
+    key_up = pygame.K_UP
+
+
+class BallAWSD(PlayerBall):
+    key_down = pygame.K_s
+    key_left = pygame.K_a
+    key_right = pygame.K_d
+    key_up = pygame.K_w
 
 
 class EnemyBall(Ball):
