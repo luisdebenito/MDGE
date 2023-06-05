@@ -6,11 +6,12 @@ WALL_COLOR = (205, 217, 132)
 
 
 class Playground(Paintable):
+    wall_width: int = 80
+
     def __init__(self, position: Position, width: int, height: int) -> None:
         self.width: int = width
         self.height: int = height
         self.position: Position = position
-        self.wall_width = 80
         self.wall_x = (self.width // 2 - self.wall_width // 2) + self.position.posx
 
     def paint(self, screen: pygame.Surface) -> None:

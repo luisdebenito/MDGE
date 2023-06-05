@@ -3,7 +3,7 @@ from enum import Enum
 import pygame
 import os
 
-SPEED_RATIO = os.environ.get("SPEED_RATIO", 1)
+SPEED_RATIO = int(os.environ.get("SPEED_RATIO", 6))
 
 
 DARK_GRAY: tuple = (40, 40, 40)

@@ -1,20 +1,17 @@
 import pygame
-from src.help import Position
 from src.help import Paintable, Movable, Position, SPEED_RATIO
 import random
 import math
 
-PLAYER_COLOR = (225, 225, 225)
-ENEMY_COLOR = (8, 55, 135)
-
 
 class Ball(Paintable, Movable):
+    speed: float = 0.55 * SPEED_RATIO
+    rad: int = 10
+    outline: int = 20
+    color: tuple = (225, 225, 225)
+
     def __init__(self, position: Position) -> None:
-        self.rad: int = 10
         self.position: Position = position
-        self.speed: float = 0.55 * SPEED_RATIO
-        self.color: tuple = PLAYER_COLOR
-        self.outline: int = 20
 
     def paint(self, screen: pygame.Surface) -> None:
         pygame.draw.circle(
@@ -30,10 +27,10 @@ class Ball(Paintable, Movable):
 
 
 class PlayerBall(Ball):
-    key_left = ""
-    key_right = ""
-    key_up = ""
-    key_down = ""
+    key_left: str = ""
+    key_right: str = ""
+    key_up: str = ""
+    key_down: str = ""
 
     def move(self, keys: pygame.key.ScancodeWrapper) -> None:
         # Determine the movement direction based on the pressed keys
@@ -63,14 +60,15 @@ class BallAWSD(PlayerBall):
 
 
 class EnemyBall(Ball):
+    rad: int = 20
+    color: tuple = (8, 55, 135)
+    outline: int = 0
+
     def __init__(self, position: Position, angle: float, speed: float) -> None:
-        self.rad: int = 20
-        self.position: Position = position
-        self.color: tuple = ENEMY_COLOR
+        super().__init__(position)
         self.angle: float = angle
         self.angleOffset: float = random.uniform(0, math.pi / 3)
         self.speed: float = speed * SPEED_RATIO
-        self.outline = 0
 
     def move(self) -> None:
         self.position.posx += math.cos(self.angle + self.angleOffset) * self.speed

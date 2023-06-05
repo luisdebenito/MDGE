@@ -1,9 +1,11 @@
 from src.ball import BallAWSD, BallArrows, EnemyBall, Ball
 from src.playground import Playground
 from src.enemySpawner import EnemySpawner
+import math
 
 
 class Collider:
+    @staticmethod
     def checkLeftBall_w_Playground(ball: BallAWSD, pg: Playground) -> bool:
         return (
             (ball.position.posx - ball.rad < pg.position.posx)
@@ -12,6 +14,7 @@ class Collider:
             or ball.position.posy + ball.rad > pg.position.posy + pg.height
         )
 
+    @staticmethod
     def checkRightBall_w_Playground(ball: BallArrows, pg: Playground) -> bool:
         return (
             ball.position.posx - ball.rad < (pg.wall_x + pg.wall_width)
@@ -20,6 +23,7 @@ class Collider:
             or ball.position.posy + ball.rad > pg.position.posy + pg.height
         )
 
+    @staticmethod
     def check_Ball_w_Enemies(
         ball: Ball, enemySpawner: EnemySpawner
     ) -> EnemyBall | bool:
@@ -36,8 +40,10 @@ class Collider:
                             return enemy
         return False
 
+    @staticmethod
     def check_collision_between(ball: Ball, enemy: EnemyBall) -> bool:
-        distance_squared = (ball.position.posx - enemy.position.posx) ** 2 + (
-            ball.position.posy - enemy.position.posy
-        ) ** 2
-        return distance_squared <= (ball.rad + enemy.rad) ** 2
+        distance = math.hypot(
+            ball.position.posx - enemy.position.posx,
+            ball.position.posy - enemy.position.posy,
+        )
+        return distance <= ball.rad + enemy.rad

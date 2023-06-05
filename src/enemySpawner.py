@@ -3,24 +3,19 @@ from src.ball import EnemyBall
 import random
 import math
 import pygame
-from typing import List
+from typing import List, Optional
 
 
 class EnemySpawner(Paintable, Movable):
+    grid_size: int = 50
+    maxNumEnemies: int = 27
+
     def __init__(self, score: int, width: int, height: int) -> None:
         self.enemies: List[EnemyBall] = []
-
-        # area where the world is
         self.height = height
         self.width = width
-
-        # spawn enemies settings
-        self.maxNumEnemies: int = 27
         self.spawn_radius = max(width, height) * 0.55
         self._generate_next_spawn_delay(score)
-
-        # collider variables
-        self.grid_size = 50
         self.grid = {}
 
     def update_grid_size(self, rad: int) -> None:
@@ -32,46 +27,58 @@ class EnemySpawner(Paintable, Movable):
 
     def spawnEnemies(self, score: int) -> None:
         self._remove_old()
-        if (len(self.enemies) >= self.maxNumEnemies) or (
-            score - self.last_spawn_time < self.next_spawn_delay
+        if (
+            len(self.enemies) >= self.maxNumEnemies
+            or score - self.last_spawn_time < self.next_spawn_delay
         ):
             return
-
         self._spawn_new(score)
 
     def _spawn_new(self, score: int) -> None:
         num_balls = random.randint(4, 7)
-        for _ in range(num_balls):
-            angle = random.uniform(0, 2 * math.pi)
-            speed = random.uniform(0.3, 0.6) * -1
-
-            spawn_x = self.width // 2 + math.cos(angle) * self.spawn_radius
-            spawn_y = self.height // 2 + math.sin(angle) * self.spawn_radius
-
-            position = Position(spawn_x, spawn_y)
-            enemy_ball = EnemyBall(position, angle, speed)
-
-            self.enemies.append(enemy_ball)
-
+        self.enemies.extend(
+            [
+                EnemyBall(
+                    Position(
+                        self.width // 2 + math.cos(angle) * self.spawn_radius,
+                        self.height // 2 + math.sin(angle) * self.spawn_radius,
+                    ),
+                    angle,
+                    speed,
+                )
+                for _ in range(num_balls)
+                for angle, speed in [
+                    (random.uniform(0, 2 * math.pi), random.uniform(0.3, 0.6) * -1)
+                ]
+            ]
+        )
         self._generate_next_spawn_delay(score)
 
     def _remove_old(self) -> None:
-        for en_ball in self.enemies:
-            distance = math.sqrt(
-                (en_ball.position.posx - self.width // 2) ** 2
-                + (en_ball.position.posy - self.height // 2) ** 2
+        if not self.enemies:
+            return
+        spawn_radius_plus_enemies_rad = self.spawn_radius + max(
+            enemy.rad for enemy in self.enemies
+        )
+        center_x = self.width // 2
+        center_y = self.height // 2
+        self.enemies = [
+            enemy
+            for enemy in self.enemies
+            if math.hypot(
+                enemy.position.posx - center_x, enemy.position.posy - center_y
             )
-            if distance > self.spawn_radius + en_ball.rad:
-                self.removeEnemy(en_ball)
+            <= spawn_radius_plus_enemies_rad
+        ]
 
-    def removeEnemy(self, enemy: EnemyBall):
+    def removeEnemy(self, enemy: EnemyBall) -> None:
         self.enemies.remove(enemy)
 
     def paint(self, screen: pygame.Surface) -> None:
         for enemy in self.enemies:
             enemy.paint(screen)
 
-    def move(self, keys: pygame.key.ScancodeWrapper | None = None) -> None:
+    def move(self, keys: Optional[pygame.key.ScancodeWrapper] = None) -> None:
         for enemy in self.enemies:
             enemy.move()
         self.update_grid()
@@ -82,6 +89,4 @@ class EnemySpawner(Paintable, Movable):
             cell_x = int(enemy.position.posx // self.grid_size)
             cell_y = int(enemy.position.posy // self.grid_size)
             cell_key = (cell_x, cell_y)
-            if cell_key not in self.grid:
-                self.grid[cell_key] = []
-            self.grid[cell_key].append(enemy)
+            self.grid.setdefault(cell_key, []).append(enemy)

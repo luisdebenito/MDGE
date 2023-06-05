@@ -6,11 +6,12 @@ ENERGY_COLOR = (145, 156, 178)
 
 
 class EnergyBar(Paintable, Movable):
+    paintedHeight: int = 0
+
     def __init__(self, position: Position, height: int, width: int) -> None:
-        self.position = position
-        self.height = height
-        self.width = width
-        self.paintedHeight = 0
+        self.position: Position = position
+        self.height: int = height
+        self.width: int = width
 
         self.position.posx = self.position.posx - self.width // 2
 
