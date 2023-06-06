@@ -1,6 +1,6 @@
 import pygame
 from src.help import DARK_GRAY, YELLOW_TAXI
-from src.font import welcomePage_font, instructions_font
+from src.font import welcomePage_font, instructions_font, tutorial_font
 
 
 class WelcomePageScreen:
@@ -15,6 +15,12 @@ class WelcomePageScreen:
         t11 = welcomePage_font.render("Difficult", True, YELLOW_TAXI)
         t2 = welcomePage_font.render("Game Ever", True, YELLOW_TAXI)
 
+        te = tutorial_font.render(
+            "Stay alive avoiding the walls and the enemies as long as you can",
+            True,
+            YELLOW_TAXI,
+        )
+
         t5 = instructions_font.render("SPACE TO PLAY", True, YELLOW_TAXI)
         t3 = instructions_font.render("ARROWS right ball", True, YELLOW_TAXI)
         t4 = instructions_font.render("ASDW left ball", True, YELLOW_TAXI)
@@ -24,16 +30,19 @@ class WelcomePageScreen:
         tr3 = t3.get_rect()
         tr4 = t3.get_rect()
         tr5 = t5.get_rect()
+        tre = te.get_rect()
         tr1.center = (self.width // 2, self.height * 1 // 8)
         tr11.center = (self.width // 2, self.height * 2.5 // 8)
         tr2.center = (self.width // 2, self.height * 4 // 8)
         tr3.center = (self.width * 3 // 4, self.height * 6.5 // 8)
         tr4.center = (self.width // 4, self.height * 6.5 // 8)
-        tr5.center = (self.width // 2, self.height * 5.5 // 8)
+        tr5.center = (self.width // 2, self.height * 5.8 // 8)
+        tre.center = (self.width // 2, self.height * 4.92 // 8)
         self.screen.blit(t1, tr1)
         self.screen.blit(t11, tr11)
         self.screen.blit(t2, tr2)
         self.screen.blit(t3, tr3)
         self.screen.blit(t4, tr4)
         self.screen.blit(t5, tr5)
+        self.screen.blit(te, tre)
         pygame.display.flip()

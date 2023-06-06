@@ -97,5 +97,3 @@ class EnemySpawner(Paintable, Movable):
         self.maxNumEnemies += 3
         self.maxNumBalls4Random += 1
         self.minNumBalls4Random += 1
-
-        print(self.maxNumBalls4Random, self.minNumBalls4Random, self.maxNumEnemies)
