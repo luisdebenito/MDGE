@@ -1,5 +1,5 @@
 import pygame
-from src.help import DARK_GRAY, FONT_COLOR
+from src.help import DARK_GRAY, YELLOW_TAXI
 from src.font import gameOver_font, credit_font, instructions_font
 from src.ball import Ball
 
@@ -15,16 +15,18 @@ class GameOverScreen:
         playerL.paint(self.screen)
         playerR.paint(self.screen)
 
-        textGO = gameOver_font.render("GAME OVER", True, FONT_COLOR)
-        textSC = gameOver_font.render(str(score), True, FONT_COLOR)
+        textGO = gameOver_font.render("GAME OVER", True, YELLOW_TAXI)
+        textSC = gameOver_font.render(str(score), True, YELLOW_TAXI)
 
-        creditLuis = credit_font.render("Created by Luis de Benito", True, FONT_COLOR)
-        creditDesign = credit_font.render("Designed by Elena Alonso", True, FONT_COLOR)
+        creditLuis = credit_font.render("Created by Luis de Benito", True, YELLOW_TAXI)
+        creditDesign = credit_font.render("Designed by Elena Alonso", True, YELLOW_TAXI)
         creditMusic = credit_font.render(
-            "Music by Luis de Benito ft. Hans Zimmer", True, FONT_COLOR
+            "Music by Luis de Benito ft. Hans Zimmer", True, YELLOW_TAXI
         )
 
-        instructions = instructions_font.render("SPACE TO PLAY AGAIN", True, FONT_COLOR)
+        instructions = instructions_font.render(
+            "SPACE TO PLAY AGAIN", True, YELLOW_TAXI
+        )
 
         textRectGo = textGO.get_rect()
         textRectSC = textSC.get_rect()

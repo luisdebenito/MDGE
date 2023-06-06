@@ -2,8 +2,8 @@ from src.help import Paintable, Movable, Position, SPEED_RATIO, DARK_GRAY
 from src.font import energybar_font
 import pygame
 
-ENERGY_COLOR = (196, 201, 89)
-CONSUMABLE_COLOR = (136, 252, 3)
+ENERGY_COLOR: tuple = (147, 183, 190)
+CONSUMABLE_COLOR: tuple = (25, 133, 161)
 
 
 class EnergyBar(Paintable, Movable):

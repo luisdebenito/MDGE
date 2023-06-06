@@ -1,8 +1,5 @@
 import pygame
-from src.help import Paintable, Position
-
-LINE_COLOR = (209, 51, 212)
-WALL_COLOR = (196, 201, 89)
+from src.help import Paintable, Position, YELLOW_TAXI
 
 
 class Playground(Paintable):
@@ -17,7 +14,7 @@ class Playground(Paintable):
     def paint(self, screen: pygame.Surface) -> None:
         pygame.draw.rect(
             screen,
-            WALL_COLOR,
+            YELLOW_TAXI,
             (
                 self.wall_x,
                 self.position.posy,
@@ -29,7 +26,7 @@ class Playground(Paintable):
 
         pygame.draw.rect(
             screen,
-            LINE_COLOR,
+            YELLOW_TAXI,
             (
                 self.position.posx,
                 self.position.posy,

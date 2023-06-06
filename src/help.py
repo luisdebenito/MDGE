@@ -7,7 +7,9 @@ SPEED_RATIO = int(os.environ.get("SPEED_RATIO", 5))
 
 
 DARK_GRAY: tuple = (40, 40, 40)
-FONT_COLOR = (196, 201, 89)
+YELLOW_TAXI: tuple = (196, 201, 89)
+WHITE_LIGHT: tuple = (225, 225, 225)
+PINK: tuple = (166, 58, 80)
 
 
 class GAMESTATUS(Enum):

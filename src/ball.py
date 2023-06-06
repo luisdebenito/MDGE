@@ -1,5 +1,5 @@
 import pygame
-from src.help import Paintable, Movable, Position, SPEED_RATIO
+from src.help import Paintable, Movable, Position, SPEED_RATIO, WHITE_LIGHT, PINK
 import random
 import math
 
@@ -8,7 +8,7 @@ class Ball(Paintable, Movable):
     speed: float = 0.55 * SPEED_RATIO
     rad: int = 10
     outline: int = 20
-    color: tuple = (225, 225, 225)
+    color: tuple = WHITE_LIGHT
 
     def __init__(self, position: Position) -> None:
         self.position: Position = position
@@ -66,7 +66,7 @@ class BallAWSD(PlayerBall):
 
 class EnemyBall(Ball):
     rad: int = 20
-    color: tuple = (8, 55, 135)
+    color: tuple = PINK
     outline: int = 0
 
     def __init__(self, position: Position, angle: float, speed: float) -> None:

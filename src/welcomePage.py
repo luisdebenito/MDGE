@@ -1,5 +1,5 @@
 import pygame
-from src.help import DARK_GRAY, FONT_COLOR
+from src.help import DARK_GRAY, YELLOW_TAXI
 from src.font import welcomePage_font, instructions_font
 
 
@@ -11,13 +11,13 @@ class WelcomePageScreen:
 
     def show(self) -> None:
         self.screen.fill(DARK_GRAY)
-        t1 = welcomePage_font.render("Most", True, FONT_COLOR)
-        t11 = welcomePage_font.render("Difficult", True, FONT_COLOR)
-        t2 = welcomePage_font.render("Game Ever", True, FONT_COLOR)
+        t1 = welcomePage_font.render("Most", True, YELLOW_TAXI)
+        t11 = welcomePage_font.render("Difficult", True, YELLOW_TAXI)
+        t2 = welcomePage_font.render("Game Ever", True, YELLOW_TAXI)
 
-        t5 = instructions_font.render("SPACE TO PLAY", True, FONT_COLOR)
-        t3 = instructions_font.render("ARROWS right ball", True, FONT_COLOR)
-        t4 = instructions_font.render("ASDW left ball", True, FONT_COLOR)
+        t5 = instructions_font.render("SPACE TO PLAY", True, YELLOW_TAXI)
+        t3 = instructions_font.render("ARROWS right ball", True, YELLOW_TAXI)
+        t4 = instructions_font.render("ASDW left ball", True, YELLOW_TAXI)
         tr1 = t1.get_rect()
         tr11 = t11.get_rect()
         tr2 = t2.get_rect()
