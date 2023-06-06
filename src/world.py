@@ -1,7 +1,7 @@
 import pygame, asyncio
 import sys
 from typing import List, Union
-from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY
+from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY, SPEED_RATIO
 from src.enemySpawner import EnemySpawner
 from src.ball import BallArrows, BallAWSD
 from src.playground import Playground
@@ -91,6 +91,7 @@ class World:
             max(self.playerL.rad, self.playerR.rad) + 20
         )
         self.checkEnergyConsumable()
+        self.checkLevelDifficulty()
         self.paint()
 
     def move(self) -> None:
@@ -125,6 +126,14 @@ class World:
             return
         self.playerL.slim() if self.playerL.rad >= self.playerR.rad else self.playerR.slim()
         self.energyBar.restart()
+
+    def checkLevelDifficulty(self) -> None:
+        if (
+            self.score.value > 0
+            and self.score.value % 100 == 0
+            and self.score._totalIterations % (250 // SPEED_RATIO) == 0
+        ):
+            self.enemiesSpawner.levelUp()
 
     def _checkSpaceBar(self) -> None:
         if self.keys_pressed[pygame.K_SPACE]:

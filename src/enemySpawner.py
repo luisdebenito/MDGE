@@ -9,6 +9,8 @@ from typing import List, Optional
 class EnemySpawner(Paintable, Movable):
     grid_size: int = 50
     maxNumEnemies: int = 28
+    minNumBalls4Random: int = 5
+    maxNumBalls4Random: int = 7
 
     def __init__(self, score: int, width: int, height: int) -> None:
         self.enemies: List[EnemyBall] = []
@@ -35,7 +37,7 @@ class EnemySpawner(Paintable, Movable):
         self._spawn_new(score)
 
     def _spawn_new(self, score: int) -> None:
-        num_balls = random.randint(5, 7)
+        num_balls = random.randint(self.minNumBalls4Random, self.maxNumBalls4Random)
         self.enemies.extend(
             [
                 EnemyBall(
@@ -90,3 +92,10 @@ class EnemySpawner(Paintable, Movable):
             cell_y = int(enemy.position.posy // self.grid_size)
             cell_key = (cell_x, cell_y)
             self.grid.setdefault(cell_key, []).append(enemy)
+
+    def levelUp(self) -> None:
+        self.maxNumEnemies += 3
+        self.maxNumBalls4Random += 1
+        self.minNumBalls4Random += 1
+
+        print(self.maxNumBalls4Random, self.minNumBalls4Random, self.maxNumEnemies)

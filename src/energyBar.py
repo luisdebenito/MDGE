@@ -44,7 +44,7 @@ class EnergyBar(Paintable, Movable):
     def move(self, keys: pygame.key.ScancodeWrapper | None = None):
         if self.paintedHeight >= self.height:
             return
-        self.paintedHeight += (self.height / 50) * 0.005 * SPEED_RATIO
+        self.paintedHeight += (self.height / 50) * 0.003 * SPEED_RATIO
 
     def is_Consumable(self) -> bool:
         return self.paintedHeight >= self.height
