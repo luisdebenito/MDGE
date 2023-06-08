@@ -86,9 +86,7 @@ class World:
             self.handle_events()
             if self.status == GAMESTATUS.PLAYING:
                 self._playing()
-                continue
-
-            if self.status == GAMESTATUS.LEVELOVER:
+            elif self.status == GAMESTATUS.LEVELOVER:
                 self._checkSpaceBar(False)
                 self.levelScreen.show(
                     "··· You died ···",
@@ -97,9 +95,7 @@ class World:
                     self.playerL,
                     self.playerR,
                 )
-                continue
-
-            if self.status == GAMESTATUS.LEVELUP:
+            elif self.status == GAMESTATUS.LEVELUP:
                 self._checkSpaceBar(False)
                 num = self.levelHandler.getLevel().number
                 self.levelScreen.show(
@@ -109,28 +105,25 @@ class World:
                     self.playerL,
                     self.playerR,
                 )
-                continue
+            else:
+                self._checkSpaceBar()
+                if self.status == GAMESTATUS.GAMEDONE:
+                    self.gameOverScreen.show(
+                        f"SCORE {self.levelHandler.lifes}",
+                        self.playerL,
+                        self.playerR,
+                        "YOU WON",
+                    )
 
-            self._checkSpaceBar()
-            if self.status == GAMESTATUS.GAMEDONE:
-                self.gameOverScreen.show(
-                    f"SCORE {self.levelHandler.lifes}",
-                    self.playerL,
-                    self.playerR,
-                    "YOU WON",
-                )
-                continue
-
-            if self.status == GAMESTATUS.GAMEOVER:
-                self.gameOverScreen.show(
-                    f"LEVEL {self.levelHandler.getLevel().number}",
-                    self.playerL,
-                    self.playerR,
-                    "GAME OVER",
-                )
-                continue
-
-            self.welcomePageScreen.show()
+                elif self.status == GAMESTATUS.GAMEOVER:
+                    self.gameOverScreen.show(
+                        f"LEVEL {self.levelHandler.getLevel().number}",
+                        self.playerL,
+                        self.playerR,
+                        "GAME OVER",
+                    )
+                else:
+                    self.welcomePageScreen.show()
 
             await asyncio.sleep(0)
 
@@ -156,7 +149,7 @@ class World:
         if not self.levelBar.is_completed():
             return
         self.levelHandler.levelUp()
-        self.musicplayer.pauseUnpause
+        self.musicplayer.pauseUnpause()
         if not self.levelHandler.getLevel():
             self.status = GAMESTATUS.GAMEDONE
         else:
