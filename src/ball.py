@@ -13,7 +13,7 @@ class Ball(Paintable, Movable):
 
     def __init__(self, position: Position) -> None:
         self.position: Position = position
-        self.trail: Trail = Trail((79, 78, 74), 16 - (SPEED_RATIO * 2), self.outline)
+        self.trail: Trail = Trail((79, 78, 74), 14 - (SPEED_RATIO * 2), self.outline)
 
     def paint(self, screen: pygame.Surface) -> None:
         self.trail.paint(screen, self.rad)
@@ -75,9 +75,9 @@ class EnemyBall(Ball):
     def __init__(self, position: Position, angle: float, speed: float) -> None:
         super().__init__(position)
         self.color: tuple = (
-            random.randint(90, 150),
-            random.randint(90, 150),
-            random.randint(90, 150),
+            random.randint(150, 200),
+            random.randint(0, 40),
+            random.randint(0, 40),
         )
         self.rad = random.randint(18, 23)
         self.angle: float = angle
