@@ -12,7 +12,7 @@ class Messages:
         "All set?",
         "Well...",
         "That was nice...",
-        "Surprised yet?",
+        "Surprised already?",
     ]
 
     _bad: List[str] = [
