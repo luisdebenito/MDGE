@@ -14,5 +14,12 @@ class MusicPlayer:
     def play(self) -> None:
         mixer.music.play()
 
-    def pauseUnpause(self) -> None:
-        mixer.music.pause() if mixer.music.get_busy() else mixer.music.unpause()
+    # NOT WORKING IN PYGBAG
+    # def pauseUnpause(self) -> None:
+    #     mixer.music.pause() if mixer.music.get_busy() else mixer.music.unpause()
+
+    def pause(self) -> None:
+        mixer.music.pause()
+
+    def unpause(self) -> None:
+        mixer.music.unpause()

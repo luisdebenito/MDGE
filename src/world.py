@@ -149,7 +149,7 @@ class World:
         if not self.levelBar.is_completed():
             return
         self.levelHandler.levelUp()
-        self.musicplayer.pauseUnpause()
+        self.musicplayer.pause()
         if not self.levelHandler.getLevel():
             self.status = GAMESTATUS.GAMEDONE
         else:
@@ -179,7 +179,7 @@ class World:
                 self.status = GAMESTATUS.GAMEOVER
             else:
                 self.status = GAMESTATUS.LEVELOVER
-            self.musicplayer.pauseUnpause()
+            self.musicplayer.pause()
 
         for ball in [self.playerL, self.playerR]:
             if enemy := Collider.check_Ball_w_Enemies(ball, self.enemiesSpawner):
@@ -192,7 +192,7 @@ class World:
                 self._init_world()
                 self.musicplayer.play()
             else:
-                self.musicplayer.pauseUnpause()
+                self.musicplayer.unpause()
             self._init_level()
             self.status = GAMESTATUS.PLAYING
 
