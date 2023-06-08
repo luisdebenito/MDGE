@@ -13,6 +13,7 @@ from src.gameOver import GameOverScreen
 from src.welcomePage import WelcomePageScreen
 from src.levelHandler import LevelHandler, Level
 from src.levelScreen import LevelScreen
+from src.messages import Messages
 
 
 class World:
@@ -37,6 +38,9 @@ class World:
         self.musicplayer: MusicPlayer = MusicPlayer()
         self.status: GAMESTATUS = GAMESTATUS.WELCOME
         self.keys_pressed: pygame.key.ScancodeWrapper = None
+
+        self.goodMsg = ""
+        self.badMsg = ""
 
     def _init_world(self) -> None:
         self.iters: int = 0
@@ -64,9 +68,9 @@ class World:
                 self.playground,
                 self.levelBar,
                 self.score,
-                self.enemiesSpawner,
                 self.playerR,
                 self.playerL,
+                self.enemiesSpawner,
             ]
         )
 
@@ -76,8 +80,7 @@ class World:
         self.playerL.restart(Position(self.width // 4, self.height // 2))
         self.enemiesSpawner.restart(self.iters, level)
         self.levelBar.restart()
-        self.levelBar.set_level(level.number)
-        self.score.value = self.levelHandler.lifes
+        self.score.value = self.levelHandler.getLevel().number
         self.status = GAMESTATUS.PLAYING
 
     async def play(self) -> None:
@@ -89,7 +92,7 @@ class World:
             elif self.status == GAMESTATUS.LEVELOVER:
                 self._checkSpaceBar(False)
                 self.levelScreen.show(
-                    "··· You died ···",
+                    self.badMsg,
                     self.levelHandler.getLevel().number,
                     self.levelHandler.lifes,
                     self.playerL,
@@ -99,7 +102,7 @@ class World:
                 self._checkSpaceBar(False)
                 num = self.levelHandler.getLevel().number
                 self.levelScreen.show(
-                    f"··· Level {num-1} completed ··· +1Life",
+                    self.goodMsg,
                     num,
                     self.levelHandler.lifes,
                     self.playerL,
@@ -154,6 +157,7 @@ class World:
             self.status = GAMESTATUS.GAMEDONE
         else:
             self.status = GAMESTATUS.LEVELUP
+            self.goodMsg = Messages.good()
 
     def move(self) -> None:
         for gameObject in self.gameObjects:
@@ -179,6 +183,7 @@ class World:
                 self.status = GAMESTATUS.GAMEOVER
             else:
                 self.status = GAMESTATUS.LEVELOVER
+                self.badMsg = Messages.bad()
             self.musicplayer.pause()
 
         for ball in [self.playerL, self.playerR]:

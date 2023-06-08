@@ -8,7 +8,7 @@ SPEED_RATIO = int(os.environ.get("SPEED_RATIO", 5))
 
 DARK_GRAY: tuple = (40, 40, 40)
 YELLOW_TAXI: tuple = (196, 201, 89)
-WHITE_LIGHT: tuple = (225, 225, 225)
+WHITE_LIGHT: tuple = (210, 210, 210)
 PINK: tuple = (166, 58, 80)
 
 

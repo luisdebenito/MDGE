@@ -1,5 +1,6 @@
 import pygame
-from src.help import Paintable, Movable, Position, SPEED_RATIO, WHITE_LIGHT, PINK
+from src.help import Paintable, Movable, Position, SPEED_RATIO, WHITE_LIGHT
+from src.trail import Trail
 import random
 import math
 
@@ -7,13 +8,16 @@ import math
 class Ball(Paintable, Movable):
     speed: float = 0.55 * SPEED_RATIO
     rad: int = 10
-    outline: int = 20
+    outline: int = 10
     color: tuple = WHITE_LIGHT
 
     def __init__(self, position: Position) -> None:
         self.position: Position = position
+        self.trail: Trail = Trail((79, 78, 74), 13, self.outline)
 
     def paint(self, screen: pygame.Surface) -> None:
+        self.trail.paint(screen, self.rad)
+
         pygame.draw.circle(
             screen,
             self.color,
@@ -44,6 +48,8 @@ class PlayerBall(Ball):
         self.position.posx += dx * self.speed * diagonal_factor
         self.position.posy += dy * self.speed * diagonal_factor
 
+        self.trail.addPoint(Position(self.position.posx, self.position.posy))
+
     def restart(self, position: Position):
         self.rad = 10
         self.position = position
@@ -64,12 +70,16 @@ class BallAWSD(PlayerBall):
 
 
 class EnemyBall(Ball):
-    rad: int = 20
-    color: tuple = PINK
     outline: int = 0
 
     def __init__(self, position: Position, angle: float, speed: float) -> None:
         super().__init__(position)
+        self.color: tuple = (
+            random.randint(90, 150),
+            random.randint(90, 150),
+            random.randint(90, 150),
+        )
+        self.rad = random.randint(18, 23)
         self.angle: float = angle
         self.angleOffset: float = random.uniform(0, math.pi / 3)
         self.speed: float = speed * SPEED_RATIO

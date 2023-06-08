@@ -11,8 +11,8 @@ class Score(Paintable):
         self.height = height
         self.width = width
 
-    def setNumLifesLeft(self, lifesLeft: int) -> None:
-        self.value = lifesLeft
+    def setLevel(self, level: int) -> None:
+        self.value = level
 
     def paint(self, screen: pygame.Surface) -> None:
         text1 = score_font.render(str(self.value), True, SCORE_COLOR)
