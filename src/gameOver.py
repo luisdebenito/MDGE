@@ -1,6 +1,6 @@
 import pygame
 from src.help import DARK_GRAY, YELLOW_TAXI
-from src.font import gameOver_font, credit_font, instructions_font
+from src.font import gameOver_font, credit_font, instructions_font, level_big_font
 from src.ball import Ball
 
 
@@ -16,7 +16,7 @@ class GameOverScreen:
         playerR.paint(self.screen)
 
         textGO = gameOver_font.render(msg, True, YELLOW_TAXI)
-        textSC = gameOver_font.render(msgScore, True, YELLOW_TAXI)
+        textSC = level_big_font.render(msgScore, True, YELLOW_TAXI)
 
         creditLuis = credit_font.render("Created by Luis de Benito", True, YELLOW_TAXI)
         creditDesign = credit_font.render("Designed by Elena Alonso", True, YELLOW_TAXI)

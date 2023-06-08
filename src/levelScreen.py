@@ -1,6 +1,11 @@
 import pygame
 from src.help import DARK_GRAY, YELLOW_TAXI, WHITE_LIGHT
-from src.font import level_big_font, level_small_font, instructions_font
+from src.font import (
+    level_big_font,
+    level_small_font,
+    instructions_font,
+    level_medium_font,
+)
 from src.ball import Ball
 
 
@@ -19,7 +24,7 @@ class LevelScreen:
 
         instructions = instructions_font.render("SPACE TO PLAY", True, YELLOW_TAXI)
         t0 = level_big_font.render(msg, True, YELLOW_TAXI)
-        t1 = level_big_font.render(f"Level {levelNumber}", True, YELLOW_TAXI)
+        t1 = level_medium_font.render(f"Level {levelNumber}", True, YELLOW_TAXI)
         t11 = level_small_font.render(f"x {lifes}", True, YELLOW_TAXI)
         tr0 = t0.get_rect()
         tr1 = t1.get_rect()
