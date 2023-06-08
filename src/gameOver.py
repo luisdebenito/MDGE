@@ -18,10 +18,10 @@ class GameOverScreen:
         textGO = gameOver_font.render(msg, True, YELLOW_TAXI)
         textSC = level_big_font.render(msgScore, True, YELLOW_TAXI)
 
-        creditLuis = credit_font.render("Created by Luis de Benito", True, YELLOW_TAXI)
-        creditDesign = credit_font.render("Designed by Elena Alonso", True, YELLOW_TAXI)
+        creditLuis = credit_font.render("Created by Luis de Benito | @luisbq_", True, YELLOW_TAXI)
+        creditDesign = credit_font.render("Designed by Elena Alonso | @EleenaAG00", True, YELLOW_TAXI)
         creditMusic = credit_font.render(
-            "Music by Luis de Benito ft. Hans Zimmer", True, YELLOW_TAXI
+            "Music by Luis de Benito based on 'The Thin Red Line' OST", True, YELLOW_TAXI
         )
 
         instructions = instructions_font.render(
