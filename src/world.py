@@ -156,12 +156,11 @@ class World:
         if not self.levelBar.is_completed():
             return
         self.levelHandler.levelUp()
+        self.musicplayer.pauseUnpause
         if not self.levelHandler.getLevel():
             self.status = GAMESTATUS.GAMEDONE
-            self.musicplayer.stop()
-            return
-        self.musicplayer.pauseUnpause()
-        self.status = GAMESTATUS.LEVELUP
+        else:
+            self.status = GAMESTATUS.LEVELUP
 
     def move(self) -> None:
         for gameObject in self.gameObjects:
@@ -185,10 +184,9 @@ class World:
             self.levelHandler.kill()
             if self.levelHandler.is_dead():
                 self.status = GAMESTATUS.GAMEOVER
-                self.musicplayer.stop()
             else:
                 self.status = GAMESTATUS.LEVELOVER
-                self.musicplayer.pauseUnpause()
+            self.musicplayer.pauseUnpause()
 
         for ball in [self.playerL, self.playerR]:
             if enemy := Collider.check_Ball_w_Enemies(ball, self.enemiesSpawner):

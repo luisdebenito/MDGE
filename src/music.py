@@ -14,8 +14,5 @@ class MusicPlayer:
     def play(self) -> None:
         mixer.music.play()
 
-    def stop(self) -> None:
-        mixer.music.stop()
-
     def pauseUnpause(self) -> None:
         mixer.music.pause() if mixer.music.get_busy() else mixer.music.unpause()
