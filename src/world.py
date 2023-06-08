@@ -3,14 +3,14 @@ import sys
 from typing import List, Union
 from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY, SPEED_RATIO
 from src.enemySpawner import EnemySpawner
-from src.ball import BallArrows, BallAWSD
+from src.ball import BallArrows, BallAWSD, PlayerBall
 from src.playground import Playground
 from src.collider import Collider
 from src.score import Score
-from src.energyBar import EnergyBar
 from src.music import MusicPlayer
 from src.gameOver import GameOverScreen
 from src.welcomePage import WelcomePageScreen
+from ai.ai import AI, Action
 
 
 class World:
@@ -33,19 +33,21 @@ class World:
         self.status: GAMESTATUS = GAMESTATUS.WELCOME
         self.keys_pressed: pygame.key.ScancodeWrapper = None
 
+        # ai implementation
+        self.ai = AI()
+
     def _init_world(self) -> None:
         self.gameObjects: List[Union[Movable, Paintable]] = []
 
         self.playground: Playground = Playground(
             Position(10, 10), self.width - 20, self.height - 20
         )
-        self.energyBar: EnergyBar = EnergyBar(
-            Position(self.width // 2, 30), self.height - 60, 40
-        )
+
         self.score: Score = Score(self.height, self.width)
         self.enemiesSpawner: EnemySpawner = EnemySpawner(
             self.score.value, self.width, self.height
         )
+        self.enemiesSpawner.maxNumEnemies = 28
         self.playerR: BallArrows = BallArrows(
             Position(self.width * 3 // 4, self.height // 2)
         )
@@ -54,7 +56,6 @@ class World:
         self.gameObjects.extend(
             [
                 self.playground,
-                self.energyBar,
                 self.score,
                 self.enemiesSpawner,
                 self.playerR,
@@ -86,17 +87,32 @@ class World:
     def _playing(self) -> None:
         self.enemiesSpawner.spawnEnemies(self.score.value)
         self.move()
+
+        # let AI move the balls
+        self.AImove()
+
         self.calculateColliders()
         self.enemiesSpawner.update_grid_size(
             max(self.playerL.rad, self.playerR.rad) + 20
         )
-        self.checkEnergyConsumable()
-        self.checkLevelDifficulty()
+
         self.paint()
+
+    def AImove(self) -> None:
+        actions: Action = self.ai._get_GameAction(
+            self.playerR,
+            self.playerL,
+            self.enemiesSpawner.enemies,
+            self.score._totalIterations,
+        )
+        self.playerL.move(actions.movLeft)
+        self.playerR.move(actions.movRight)
 
     def move(self) -> None:
         for gameObject in self.gameObjects:
-            if isinstance(gameObject, Movable):
+            if isinstance(gameObject, Movable) and not isinstance(
+                gameObject, PlayerBall
+            ):
                 gameObject.move(self.keys_pressed)
 
     def paint(self) -> None:
@@ -121,21 +137,13 @@ class World:
                 ball.eat()
                 self.enemiesSpawner.removeEnemy(enemy)
 
-    def checkEnergyConsumable(self) -> None:
-        if not self.energyBar.is_Consumable() or not self.keys_pressed[pygame.K_SPACE]:
-            return
-        self.playerL.slim() if self.playerL.rad >= self.playerR.rad else self.playerR.slim()
-        self.energyBar.restart()
-
-    def checkLevelDifficulty(self) -> None:
-        if (
-            self.score.value > 0
-            and self.score.value % 100 == 0
-            and self.score._totalIterations % (250 // SPEED_RATIO) == 0
-        ):
-            self.enemiesSpawner.levelUp()
-
     def _checkSpaceBar(self) -> None:
+        if self.status == GAMESTATUS.GAMEOVER:
+            # Update the AI network
+            self.ai.update_network()
+            self._init_world()
+            self.status = GAMESTATUS.PLAYING
+            return
         if self.keys_pressed[pygame.K_SPACE]:
             self._init_world()
             self.status = GAMESTATUS.PLAYING

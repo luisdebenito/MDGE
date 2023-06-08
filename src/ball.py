@@ -37,11 +37,9 @@ class PlayerBall(Ball):
     key_up: str = ""
     key_down: str = ""
 
-    def move(self, keys: pygame.key.ScancodeWrapper) -> None:
-        # Determine the movement direction based on the pressed keys
-        dx = (keys[self.key_right] != 0) - (keys[self.key_left] != 0)
-        dy = (keys[self.key_down] != 0) - (keys[self.key_up] != 0)
-
+    def move(self, action: tuple) -> None:
+        dx = action[0]
+        dy = action[1]
         # Calculate the diagonal movement factor
         diagonal_factor = 1 / math.sqrt(2) if dx != 0 and dy != 0 else 1
 

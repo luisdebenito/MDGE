@@ -54,6 +54,9 @@ class EnemySpawner(Paintable, Movable):
                 ]
             ]
         )
+        if x := len(self.enemies) > self.maxNumEnemies:
+            self.enemies = self.enemies[: (self.maxNumEnemies - x)]
+
         self._generate_next_spawn_delay(score)
 
     def _remove_old(self) -> None:
@@ -94,6 +97,7 @@ class EnemySpawner(Paintable, Movable):
             self.grid.setdefault(cell_key, []).append(enemy)
 
     def levelUp(self) -> None:
-        self.maxNumEnemies += 3
-        self.maxNumBalls4Random += 1
-        self.minNumBalls4Random += 1
+        pass
+        # self.maxNumEnemies += 3
+        # self.maxNumBalls4Random += 1
+        # self.minNumBalls4Random += 1
