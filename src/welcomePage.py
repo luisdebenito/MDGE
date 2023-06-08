@@ -16,7 +16,7 @@ class WelcomePageScreen:
         t2 = welcomePage_font.render("Game Ever", True, YELLOW_TAXI)
 
         te = tutorial_font.render(
-            "Stay alive avoiding the walls and the enemies as long as you can",
+            "Hit the wall and you are dead. Avoid the enemies. I bet you can't stay alive untill level 8",
             True,
             YELLOW_TAXI,
         )

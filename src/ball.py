@@ -25,11 +25,6 @@ class Ball(Paintable, Movable):
     def eat(self) -> None:
         self.rad += 10
 
-    def slim(self) -> None:
-        self.rad /= 3
-        if self.rad < 10:
-            self.rad = 10
-
 
 class PlayerBall(Ball):
     key_left: str = ""
@@ -48,6 +43,10 @@ class PlayerBall(Ball):
         # Update the position based on the direction and speed
         self.position.posx += dx * self.speed * diagonal_factor
         self.position.posy += dy * self.speed * diagonal_factor
+
+    def restart(self, position: Position):
+        self.rad = 10
+        self.position = position
 
 
 class BallArrows(PlayerBall):

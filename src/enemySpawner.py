@@ -1,5 +1,6 @@
-from src.help import Paintable, Movable, Position
+from src.help import Paintable, Movable, Position, SPEED_RATIO
 from src.ball import EnemyBall
+from src.levelHandler import Level
 import random
 import math
 import pygame
@@ -8,36 +9,40 @@ from typing import List, Optional
 
 class EnemySpawner(Paintable, Movable):
     grid_size: int = 50
-    maxNumEnemies: int = 28
-    minNumBalls4Random: int = 5
-    maxNumBalls4Random: int = 7
 
-    def __init__(self, score: int, width: int, height: int) -> None:
-        self.enemies: List[EnemyBall] = []
+    def __init__(self, iter: int, width: int, height: int, level: Level) -> None:
         self.height = height
         self.width = width
         self.spawn_radius = max(width, height) * 0.55
-        self._generate_next_spawn_delay(score)
+        self.next_spawn_delay = 250 // SPEED_RATIO
+        self.restart(iter, level)
+
+    def restart(self, iter: int, level: Level) -> None:
+        self.enemies: List[EnemyBall] = []
         self.grid = {}
+
+        self.maxNumEnemies: int = level.maxNumEnemies
+        self.minNumRand: int = level.minNumRand
+        self.maxNumRand: int = level.maxNumRand
+        self._generate_next_spawn_delay(iter)
 
     def update_grid_size(self, rad: int) -> None:
         self.grid_size = rad
 
-    def _generate_next_spawn_delay(self, score: int) -> None:
-        self.last_spawn_time = score
-        self.next_spawn_delay = 2
+    def _generate_next_spawn_delay(self, iter: int) -> None:
+        self.last_spawn_time = iter
 
-    def spawnEnemies(self, score: int) -> None:
+    def spawnEnemies(self, iter: int) -> None:
         self._remove_old()
         if (
             len(self.enemies) >= self.maxNumEnemies
-            or score - self.last_spawn_time < self.next_spawn_delay
+            or iter - self.last_spawn_time < self.next_spawn_delay
         ):
             return
-        self._spawn_new(score)
+        self._spawn_new(iter)
 
-    def _spawn_new(self, score: int) -> None:
-        num_balls = random.randint(self.minNumBalls4Random, self.maxNumBalls4Random)
+    def _spawn_new(self, iter: int) -> None:
+        num_balls = random.randint(self.minNumRand, self.maxNumRand)
         self.enemies.extend(
             [
                 EnemyBall(
@@ -54,7 +59,7 @@ class EnemySpawner(Paintable, Movable):
                 ]
             ]
         )
-        self._generate_next_spawn_delay(score)
+        self._generate_next_spawn_delay(iter)
 
     def _remove_old(self) -> None:
         if not self.enemies:
@@ -92,8 +97,3 @@ class EnemySpawner(Paintable, Movable):
             cell_y = int(enemy.position.posy // self.grid_size)
             cell_key = (cell_x, cell_y)
             self.grid.setdefault(cell_key, []).append(enemy)
-
-    def levelUp(self) -> None:
-        self.maxNumEnemies += 3
-        self.maxNumBalls4Random += 1
-        self.minNumBalls4Random += 1

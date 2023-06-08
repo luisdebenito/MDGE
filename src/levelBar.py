@@ -1,12 +1,11 @@
-from src.help import Paintable, Movable, Position, SPEED_RATIO, DARK_GRAY
+from src.help import Paintable, Movable, Position, SPEED_RATIO
 from src.font import energybar_font
 import pygame
 
 ENERGY_COLOR: tuple = (147, 183, 190)
-CONSUMABLE_COLOR: tuple = (25, 133, 161)
 
 
-class EnergyBar(Paintable, Movable):
+class LevelBar(Paintable, Movable):
     paintedHeight: int = 0
 
     def __init__(self, position: Position, height: int, width: int) -> None:
@@ -14,12 +13,14 @@ class EnergyBar(Paintable, Movable):
         self.height: int = height
         self.width: int = width
 
+        self.level: int = 0
+
         self.position.posx = self.position.posx - self.width // 2
 
     def paint(self, screen: pygame.Surface):
         pygame.draw.rect(
             screen,
-            CONSUMABLE_COLOR if self.is_Consumable() else ENERGY_COLOR,
+            ENERGY_COLOR,
             (
                 self.position.posx,
                 self.position.posy,
@@ -27,27 +28,27 @@ class EnergyBar(Paintable, Movable):
                 self.paintedHeight,
             ),
         )
-        if not self.is_Consumable():
-            return
 
-        rotated_text = pygame.transform.rotate(
-            energybar_font.render("SPACE FOR REDUCTION", True, DARK_GRAY), 270
-        )
+        rotated_text = energybar_font.render(f"LVL {self.level}", True, ENERGY_COLOR)
 
         rtr = rotated_text.get_rect()
-        rtr.center = (
-            self.position.posx + self.width // 2,
-            self.position.posy + self.height // 2,
-        )
-        screen.blit(rotated_text, rtr)
+        for i in range(10):
+            rtr.center = (
+                self.position.posx + self.width // 2,
+                self.position.posy + 20 + (i * self.height // 10),
+            )
+            screen.blit(rotated_text, rtr)
 
     def move(self, keys: pygame.key.ScancodeWrapper | None = None):
         if self.paintedHeight >= self.height:
             return
-        self.paintedHeight += (self.height / 50) * 0.003 * SPEED_RATIO
+        self.paintedHeight += (self.height / 50) * 0.004 * SPEED_RATIO
 
-    def is_Consumable(self) -> bool:
-        return self.paintedHeight >= self.height
+    def set_level(self, level) -> None:
+        self.level = level
 
     def restart(self) -> None:
         self.paintedHeight = 0
+
+    def is_completed(self) -> bool:
+        return self.paintedHeight >= self.height

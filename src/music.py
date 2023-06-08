@@ -1,4 +1,7 @@
 from pygame import mixer
+import pygame
+
+MUSIC_END = pygame.USEREVENT + 1
 
 
 class MusicPlayer:
@@ -6,6 +9,7 @@ class MusicPlayer:
         mixer.init()
         self.audio = mixer.music.load("media/MDGE.mp3")
         mixer.music.set_volume(0.8)
+        pygame.mixer.music.set_endevent(MUSIC_END)
 
     def play(self) -> None:
         mixer.music.play()

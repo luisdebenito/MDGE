@@ -10,13 +10,13 @@ class GameOverScreen:
         self.height: int = height
         self.width: int = width
 
-    def show(self, score: int, playerL: Ball, playerR: Ball) -> None:
+    def show(self, msgScore: str, playerL: Ball, playerR: Ball, msg: str) -> None:
         self.screen.fill(DARK_GRAY)
         playerL.paint(self.screen)
         playerR.paint(self.screen)
 
-        textGO = gameOver_font.render("GAME OVER", True, YELLOW_TAXI)
-        textSC = gameOver_font.render(str(score), True, YELLOW_TAXI)
+        textGO = gameOver_font.render(msg, True, YELLOW_TAXI)
+        textSC = gameOver_font.render(msgScore, True, YELLOW_TAXI)
 
         creditLuis = credit_font.render("Created by Luis de Benito", True, YELLOW_TAXI)
         creditDesign = credit_font.render("Designed by Elena Alonso", True, YELLOW_TAXI)

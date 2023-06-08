@@ -15,7 +15,10 @@ PINK: tuple = (166, 58, 80)
 class GAMESTATUS(Enum):
     WELCOME = 0
     PLAYING = 1
-    GAMEOVER = 2
+    LEVELOVER = 2
+    LEVELUP = 3
+    GAMEOVER = 4
+    GAMEDONE = 5
 
 
 class Paintable:

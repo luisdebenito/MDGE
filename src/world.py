@@ -1,16 +1,18 @@
 import pygame, asyncio
 import sys
 from typing import List, Union
-from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY, SPEED_RATIO
+from src.help import Paintable, Movable, GAMESTATUS, Position, DARK_GRAY
 from src.enemySpawner import EnemySpawner
 from src.ball import BallArrows, BallAWSD
 from src.playground import Playground
 from src.collider import Collider
 from src.score import Score
-from src.energyBar import EnergyBar
-from src.music import MusicPlayer
+from src.levelBar import LevelBar
+from src.music import MusicPlayer, MUSIC_END
 from src.gameOver import GameOverScreen
 from src.welcomePage import WelcomePageScreen
+from src.levelHandler import LevelHandler, Level
+from src.levelScreen import LevelScreen
 
 
 class World:
@@ -29,22 +31,28 @@ class World:
         self.welcomePageScreen: WelcomePageScreen = WelcomePageScreen(
             self.screen, self.height, self.width
         )
+        self.levelScreen: LevelScreen = LevelScreen(
+            self.screen, self.height, self.width
+        )
         self.musicplayer: MusicPlayer = MusicPlayer()
         self.status: GAMESTATUS = GAMESTATUS.WELCOME
         self.keys_pressed: pygame.key.ScancodeWrapper = None
 
     def _init_world(self) -> None:
+        self.iters: int = 0
         self.gameObjects: List[Union[Movable, Paintable]] = []
+
+        self.levelHandler: LevelHandler = LevelHandler()
 
         self.playground: Playground = Playground(
             Position(10, 10), self.width - 20, self.height - 20
         )
-        self.energyBar: EnergyBar = EnergyBar(
-            Position(self.width // 2, 30), self.height - 60, 40
+        self.levelBar: LevelBar = LevelBar(
+            Position(self.width // 2, 20), self.height - 40, 60
         )
         self.score: Score = Score(self.height, self.width)
         self.enemiesSpawner: EnemySpawner = EnemySpawner(
-            self.score.value, self.width, self.height
+            self.iters, self.width, self.height, self.levelHandler.getLevel()
         )
         self.playerR: BallArrows = BallArrows(
             Position(self.width * 3 // 4, self.height // 2)
@@ -54,7 +62,7 @@ class World:
         self.gameObjects.extend(
             [
                 self.playground,
-                self.energyBar,
+                self.levelBar,
                 self.score,
                 self.enemiesSpawner,
                 self.playerR,
@@ -62,19 +70,68 @@ class World:
             ]
         )
 
+    def _init_level(self) -> None:
+        level: Level = self.levelHandler.getLevel()
+        self.playerR.restart(Position(self.width * 3 // 4, self.height // 2))
+        self.playerL.restart(Position(self.width // 4, self.height // 2))
+        self.enemiesSpawner.restart(self.iters, level)
+        self.levelBar.restart()
+        self.levelBar.set_level(level.number)
+        self.score.value = self.levelHandler.lifes
+        self.status = GAMESTATUS.PLAYING
+
     async def play(self) -> None:
         while True:
+            self.iters += 1
             self.handle_events()
             if self.status == GAMESTATUS.PLAYING:
                 self._playing()
-            else:
-                self._checkSpaceBar()
-                if self.status == GAMESTATUS.GAMEOVER:
-                    self.gameOverScreen.show(
-                        self.score.value, self.playerL, self.playerR
-                    )
-                elif self.status == GAMESTATUS.WELCOME:
-                    self.welcomePageScreen.show()
+                continue
+
+            if self.status == GAMESTATUS.LEVELOVER:
+                self._checkSpaceBar(False)
+                self.levelScreen.show(
+                    "··· You died ···",
+                    self.levelHandler.getLevel().number,
+                    self.levelHandler.lifes,
+                    self.playerL,
+                    self.playerR,
+                )
+                continue
+
+            if self.status == GAMESTATUS.LEVELUP:
+                self._checkSpaceBar(False)
+                num = self.levelHandler.getLevel().number
+                self.levelScreen.show(
+                    f"··· Level {num-1} completed ··· +1Life",
+                    num,
+                    self.levelHandler.lifes,
+                    self.playerL,
+                    self.playerR,
+                )
+                continue
+
+            self._checkSpaceBar()
+            if self.status == GAMESTATUS.GAMEDONE:
+                self.gameOverScreen.show(
+                    f"SCORE {self.levelHandler.lifes}",
+                    self.playerL,
+                    self.playerR,
+                    "YOU WON",
+                )
+                continue
+
+            if self.status == GAMESTATUS.GAMEOVER:
+                self.gameOverScreen.show(
+                    f"LEVEL {self.levelHandler.getLevel().number}",
+                    self.playerL,
+                    self.playerR,
+                    "GAME OVER",
+                )
+                continue
+
+            self.welcomePageScreen.show()
+
             await asyncio.sleep(0)
 
     def handle_events(self) -> None:
@@ -82,17 +139,29 @@ class World:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self._exit()
+            if event.type == MUSIC_END:
+                self.musicplayer.play()
 
     def _playing(self) -> None:
-        self.enemiesSpawner.spawnEnemies(self.score.value)
+        self.enemiesSpawner.spawnEnemies(self.iters)
         self.move()
         self.calculateColliders()
         self.enemiesSpawner.update_grid_size(
             max(self.playerL.rad, self.playerR.rad) + 20
         )
-        self.checkEnergyConsumable()
-        self.checkLevelDifficulty()
+        self.checkLevelStatus()
         self.paint()
+
+    def checkLevelStatus(self) -> None:
+        if not self.levelBar.is_completed():
+            return
+        self.levelHandler.levelUp()
+        if not self.levelHandler.getLevel():
+            self.status = GAMESTATUS.GAMEDONE
+            self.musicplayer.stop()
+            return
+        self.musicplayer.pauseUnpause()
+        self.status = GAMESTATUS.LEVELUP
 
     def move(self) -> None:
         for gameObject in self.gameObjects:
@@ -113,33 +182,28 @@ class World:
                 Collider.checkRightBall_w_Playground(self.playerR, self.playground),
             ]
         ):
-            self.status = GAMESTATUS.GAMEOVER
-            self.musicplayer.stop()
+            self.levelHandler.kill()
+            if self.levelHandler.is_dead():
+                self.status = GAMESTATUS.GAMEOVER
+                self.musicplayer.stop()
+            else:
+                self.status = GAMESTATUS.LEVELOVER
+                self.musicplayer.pauseUnpause()
 
         for ball in [self.playerL, self.playerR]:
             if enemy := Collider.check_Ball_w_Enemies(ball, self.enemiesSpawner):
                 ball.eat()
                 self.enemiesSpawner.removeEnemy(enemy)
 
-    def checkEnergyConsumable(self) -> None:
-        if not self.energyBar.is_Consumable() or not self.keys_pressed[pygame.K_SPACE]:
-            return
-        self.playerL.slim() if self.playerL.rad >= self.playerR.rad else self.playerR.slim()
-        self.energyBar.restart()
-
-    def checkLevelDifficulty(self) -> None:
-        if (
-            self.score.value > 0
-            and self.score.value % 100 == 0
-            and self.score._totalIterations % (250 // SPEED_RATIO) == 0
-        ):
-            self.enemiesSpawner.levelUp()
-
-    def _checkSpaceBar(self) -> None:
+    def _checkSpaceBar(self, world: bool = True) -> None:
         if self.keys_pressed[pygame.K_SPACE]:
-            self._init_world()
+            if world:
+                self._init_world()
+                self.musicplayer.play()
+            else:
+                self.musicplayer.pauseUnpause()
+            self._init_level()
             self.status = GAMESTATUS.PLAYING
-            self.musicplayer.play()
 
     def _exit(self) -> None:
         pygame.quit()

@@ -21,7 +21,7 @@ class Playground(Paintable):
                 self.wall_width,
                 self.height,
             ),
-            20,
+            10,
         )
 
         pygame.draw.rect(
