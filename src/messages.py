@@ -27,17 +27,11 @@ class Messages:
         " =(",
     ]
 
-    _die: List[str] = [
-        "FAIL",
-        "DIE",
-        "FLOP",
-        "Fiasco",
-        "RUIN",
-        "Suffer",
-        "DOOM",
-        "VOID",
-        "Empty",
-        "HARM",
+    _score: List[str] = [
+        "luisbq(8)",
+        "lenaagal(3)",
+        "ladebepa(4)",
+        "luisbq(1)",
     ]
 
     def good() -> str:
@@ -46,5 +40,5 @@ class Messages:
     def bad() -> str:
         return random.choice(Messages._bad)
 
-    def die() -> str:
-        return random.choice(Messages._die)
+    def score() -> List[str]:
+        return Messages._score

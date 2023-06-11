@@ -15,7 +15,7 @@ class LevelBar(Paintable, Movable):
         self.width: int = width
 
         self.position.posx = self.position.posx - self.width // 2
-        self.msg = Messages.die()
+        self.msg = Messages.score()
 
     def paint(self, screen: pygame.Surface):
         pygame.draw.rect(
@@ -23,16 +23,16 @@ class LevelBar(Paintable, Movable):
             ENERGY_COLOR,
             (
                 self.position.posx,
-                self.position.posy,
+                self.position.posy + self.height - self.paintedHeight + 1,
                 self.width,
                 self.paintedHeight,
             ),
         )
 
-        rotated_text = energybar_font.render(self.msg, True, ENERGY_COLOR)
-
-        rtr = rotated_text.get_rect()
-        for i in range(10):
+        for i in range(20):
+            msg = self.msg[i] if len(self.msg) > i else "Empty"
+            rotated_text = energybar_font.render(msg, True, ENERGY_COLOR)
+            rtr = rotated_text.get_rect()
             rtr.center = (
                 self.position.posx + self.width // 2,
                 self.position.posy + 20 + (i * self.height // 10),
@@ -46,7 +46,6 @@ class LevelBar(Paintable, Movable):
 
     def restart(self) -> None:
         self.paintedHeight = 0
-        self.msg = Messages.die()
 
     def is_completed(self) -> bool:
         return self.paintedHeight >= self.height
