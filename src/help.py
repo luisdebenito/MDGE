@@ -1,9 +1,6 @@
 from abc import abstractmethod
 from enum import Enum
 import pygame
-import os
-
-SPEED_RATIO = int(os.environ.get("SPEED_RATIO", 5))
 
 
 DARK_GRAY: tuple = (40, 40, 40)

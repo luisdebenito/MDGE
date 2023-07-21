@@ -8,36 +8,26 @@ from typing import List, Optional
 
 class EnemySpawner(Paintable, Movable):
     grid_size: int = 50
-    maxNumEnemies: int = 28
-    minNumBalls4Random: int = 5
-    maxNumBalls4Random: int = 7
+    numEnemies: int = 30
 
     def __init__(self, score: int, width: int, height: int) -> None:
         self.enemies: List[EnemyBall] = []
         self.height = height
         self.width = width
         self.spawn_radius = max(width, height) * 0.55
-        self._generate_next_spawn_delay(score)
         self.grid = {}
 
     def update_grid_size(self, rad: int) -> None:
         self.grid_size = rad
 
-    def _generate_next_spawn_delay(self, score: int) -> None:
-        self.last_spawn_time = score
-        self.next_spawn_delay = 2
-
-    def spawnEnemies(self, score: int) -> None:
+    def spawnEnemies(self) -> None:
         self._remove_old()
-        if (
-            len(self.enemies) >= self.maxNumEnemies
-            or score - self.last_spawn_time < self.next_spawn_delay
-        ):
+        if len(self.enemies) == self.numEnemies:
             return
-        self._spawn_new(score)
+        self._spawn_new()
 
-    def _spawn_new(self, score: int) -> None:
-        num_balls = random.randint(self.minNumBalls4Random, self.maxNumBalls4Random)
+    def _spawn_new(self) -> None:
+        num_balls = abs(len(self.enemies) - self.numEnemies)
         self.enemies.extend(
             [
                 EnemyBall(
@@ -50,14 +40,12 @@ class EnemySpawner(Paintable, Movable):
                 )
                 for _ in range(num_balls)
                 for angle, speed in [
-                    (random.uniform(0, 2 * math.pi), random.uniform(0.3, 0.6) * -1)
+                    (random.uniform(0, 2 * math.pi), random.uniform(0.2, 0.4) * -1)
                 ]
             ]
         )
-        if x := len(self.enemies) > self.maxNumEnemies:
-            self.enemies = self.enemies[: (self.maxNumEnemies - x)]
-
-        self._generate_next_spawn_delay(score)
+        if x := len(self.enemies) > self.numEnemies:
+            self.enemies = self.enemies[: (self.numEnemies - x)]
 
     def _remove_old(self) -> None:
         if not self.enemies:
@@ -95,9 +83,3 @@ class EnemySpawner(Paintable, Movable):
             cell_y = int(enemy.position.posy // self.grid_size)
             cell_key = (cell_x, cell_y)
             self.grid.setdefault(cell_key, []).append(enemy)
-
-    def levelUp(self) -> None:
-        pass
-        # self.maxNumEnemies += 3
-        # self.maxNumBalls4Random += 1
-        # self.minNumBalls4Random += 1

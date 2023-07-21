@@ -1,4 +1,4 @@
-from src.ball import BallAWSD, BallArrows, EnemyBall, Ball
+from src.ball import PlayerBall, EnemyBall, Ball
 from src.playground import Playground
 from src.enemySpawner import EnemySpawner
 import math
@@ -6,19 +6,10 @@ import math
 
 class Collider:
     @staticmethod
-    def checkLeftBall_w_Playground(ball: BallAWSD, pg: Playground) -> bool:
+    def checkBall_w_Playground(ball: PlayerBall, pg: Playground) -> bool:
         return (
             (ball.position.posx - ball.rad < pg.position.posx)
-            or (ball.position.posx + ball.rad > pg.wall_x)
-            or ball.position.posy - ball.rad < pg.position.posy
-            or ball.position.posy + ball.rad > pg.position.posy + pg.height
-        )
-
-    @staticmethod
-    def checkRightBall_w_Playground(ball: BallArrows, pg: Playground) -> bool:
-        return (
-            ball.position.posx - ball.rad < (pg.wall_x + pg.wall_width)
-            or ball.position.posx + ball.rad > pg.position.posx + pg.width
+            or (ball.position.posx + ball.rad > pg.position.posx + pg.width)
             or ball.position.posy - ball.rad < pg.position.posy
             or ball.position.posy + ball.rad > pg.position.posy + pg.height
         )

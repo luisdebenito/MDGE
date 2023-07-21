@@ -1,11 +1,11 @@
 import pygame
-from src.help import Paintable, Movable, Position, SPEED_RATIO, WHITE_LIGHT, PINK
+from src.help import Paintable, Movable, Position, WHITE_LIGHT, PINK
 import random
 import math
 
 
 class Ball(Paintable, Movable):
-    speed: float = 0.55 * SPEED_RATIO
+    speed: float = 0.55
     rad: int = 10
     outline: int = 20
     color: tuple = WHITE_LIGHT
@@ -48,20 +48,6 @@ class PlayerBall(Ball):
         self.position.posy += dy * self.speed * diagonal_factor
 
 
-class BallArrows(PlayerBall):
-    key_down = pygame.K_DOWN
-    key_left = pygame.K_LEFT
-    key_right = pygame.K_RIGHT
-    key_up = pygame.K_UP
-
-
-class BallAWSD(PlayerBall):
-    key_down = pygame.K_s
-    key_left = pygame.K_a
-    key_right = pygame.K_d
-    key_up = pygame.K_w
-
-
 class EnemyBall(Ball):
     rad: int = 20
     color: tuple = PINK
@@ -71,7 +57,7 @@ class EnemyBall(Ball):
         super().__init__(position)
         self.angle: float = angle
         self.angleOffset: float = random.uniform(0, math.pi / 3)
-        self.speed: float = speed * SPEED_RATIO
+        self.speed: float = speed
 
     def move(self) -> None:
         self.position.posx += math.cos(self.angle + self.angleOffset) * self.speed
